@@ -1,8 +1,26 @@
 {
   "hosts": {
-    "zookeeper": "192.168.51.3",
-    "nimbus": "192.168.51.4",
-    "supervisor1": "192.168.51.5",
-    "supervisor2": "192.168.51.6"
+    "client": "192.168.53.23",
+    "master": "192.168.53.24",
+    "slave1": "192.168.53.25",
+    "slave2": "192.168.53.26"
+  },
+  "ports": {
+    "master": [
+      {
+        "guest": 80,
+        "host": 8088
+      },
+      {
+        "guest": 15128,
+        "host": 5128
+      }
+    ]
+  },
+  "defaults": {
+    "client": false,
+    "master": true,
+    "slave1": false,
+    "slave2": false
   }
 }

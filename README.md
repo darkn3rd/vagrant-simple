@@ -2,6 +2,16 @@
 
 This illustrates how to create simple Vagrant systems using datafile format of your choosing, e.g. INI, YAML, JSON, XML, or Hosts.
 
+This is an exercise in automating Vagrant, specifically using ruby.  It is also an exercise in crafting provisioning scripts in Bash (or other language).
+
+## **Robust Code**
+
+Robust code, this is not.  The sample code is just for illustrative purposes. Don't do this at home.
+
+Things you would want to do:
+ * Don't trust file exist, check for it, or handle the exception, and print out purdy message for the user.
+ * Don't trust data is clean, such as system designated as primary, there can only be one.
+
 ## Research
 
 * Vagrant Multi-Machine Docs: https://www.vagrantup.com/docs/multi-machine/

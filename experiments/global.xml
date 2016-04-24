@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <hosts>
+    <client>192.168.53.33</client>
+    <master>192.168.53.34</master>
+    <slave1>192.168.53.35</slave1>
+    <slave2>192.168.53.36</slave2>
+  </hosts>
+  <ports>
+    <master>
+      <guest>80</guest>
+      <host>8088</host>
+    </master>
+    <master>
+      <guest>15128</guest>
+      <host>5128</host>
+    </master>
+  </ports>
+  <defaults>
+    <client>false</client>
+    <master>true</master>
+    <slave1>false</slave1>
+    <slave2>true</slave2>
+  </defaults>
+</root>

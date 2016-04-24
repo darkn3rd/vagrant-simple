@@ -1,0 +1,19 @@
+---
+  hosts:
+    client: "192.168.53.43"
+    master: "192.168.53.44"
+    slave1: "192.168.53.45"
+    slave2: "192.168.53.46"
+  ports:
+    master:
+      -
+        guest: 80
+        host: 8088
+      -
+        guest: 15128
+        host: 5128
+  defaults:
+    client: false
+    master: true
+    slave1: false
+    slave2: true

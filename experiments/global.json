@@ -1,0 +1,26 @@
+{
+  "hosts": {
+    "client": "192.168.53.23",
+    "master": "192.168.53.24",
+    "slave1": "192.168.53.25",
+    "slave2": "192.168.53.26"
+  },
+  "ports": {
+    "master": [
+      {
+        "guest": 80,
+        "host": 8080
+      },
+      {
+        "guest": 3306,
+        "host": 13306
+      }
+    ]
+  },
+  "defaults": {
+    "client": false,
+    "master": true,
+    "slave1": false,
+    "slave2": false
+  }
+}

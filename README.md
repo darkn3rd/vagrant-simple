@@ -4,6 +4,12 @@ This illustrates how to create simple Vagrant systems using datafile format of y
 
 This is an exercise in automating Vagrant, specifically using ruby.  It is also an exercise in crafting provisioning scripts in Bash (or other language).
 
+## **Data Format**
+
+The data is a 4D data structure (hash of hash of list of hash) to spice things up.  Each section is divided into of configuration area: `hosts`, `defaults`, and `ports`.  Thus there may be redundancy.  
+
+The provisioning scripts only care about hosts, so they'll try to rip this out into arrays to use the data (again, keeping it simple, we could use ksh or bash4 associative arrays).
+
 ## **Robust Code**
 
 Robust code, this is not.  The sample code is just for illustrative purposes. Don't do this at home.
@@ -35,3 +41,9 @@ Things you would want to do:
 ```bash
 apt-get install -y jq xml2 node
 ```
+
+
+* http://zetcode.com/db/sqliteruby/
+* http://zetcode.com/db/sqlite/
+* http://stackoverflow.com/questions/9917225/how-do-i-use-ruby-to-connect-to-a-sqlite3-database-outside-of-rails-as-a-scripti
+* http://ruby.bastardsbook.com/chapters/sql/

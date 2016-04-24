@@ -1,5 +1,5 @@
 #!/bin/sh
-# NAME: setup-all.sh (from JSON file)
+# NAME: setup-all.sh (from INI file)
 # AUTHOR: Joaquin Menchaca
 # CREATED: 2015-11-23
 # UPDATED: 2016-04-24
@@ -7,27 +7,26 @@
 # PURPOSE: Configures `/etc/hosts` and global ssh configuration for each
 #  password-less system to system communication through ssh.
 # DEPENDENCIES:
-#  * POSIX shell, POSIX Commands (cut, grep, tr)
-#  * jq utility
-#  * Global Configuration - global.json
+#  * GNU Bash, POSIX Commands (awk, grep)
+#  * xml2 utility
+#  * Global Configuration - global.ini
 #  * VirtualBox Guest Editions installed on guest system
 #  * Local host . directory mounted as /vagrant on guest system
 # NOTES:
 #  * This script will be run on the guest operating system
-##### Dependencies for JSON parsing
-apt-get install -y jq
 
-which -s jq || \
-  { echo "ERROR: jq not found. Install jq or ensure it is in your path";
-    exit 1; }
+##### Dependencies
+PARSER="./iniparse.awk"
+[ -e ${CONFIGFILE} ] || \
+  { echo "ERROR: ${PARSER} is missing. Exiting"; exit 1; }
 
 ##### Fetch Hosts
-CONFIGFILE="global.json"
+CONFIGFILE="global.ini"
 
 [ -e ${CONFIGFILE} ] || \
   { echo "ERROR: ${CONFIGFILE} doesn't exist. Exiting"; exit 1; }
 
-HOSTS_DATA=$(jq -c '.hosts' < ${CONFIGFILE} | tr -d '{}"' | tr ':,' ' \n')
+HOSTS_DATA=$(${PARSER} < ${CONFIGFILE} | grep hosts | sed 's/^hosts\.//' | tr -s '="' ' ')
 HOSTS=$(echo "${HOSTS_DATA}" | cut -d ' ' -f1)
 
 ##### Local Variables

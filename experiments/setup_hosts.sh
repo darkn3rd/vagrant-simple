@@ -1,5 +1,5 @@
 #!/bin/sh
-# NAME: setup-all.sh (from JSON file)
+# NAME: setup-all.sh (from hosts file)
 # AUTHOR: Joaquin Menchaca
 # CREATED: 2015-11-23
 # UPDATED: 2016-04-24
@@ -8,27 +8,19 @@
 #  password-less system to system communication through ssh.
 # DEPENDENCIES:
 #  * POSIX shell, POSIX Commands (cut, grep, tr)
-#  * jq utility
-#  * Global Configuration - global.json
+#  * Global Configuration - global.hosts
 #  * VirtualBox Guest Editions installed on guest system
 #  * Local host . directory mounted as /vagrant on guest system
 # NOTES:
 #  * This script will be run on the guest operating system
-##### Dependencies for JSON parsing
-apt-get install -y jq
-
-which -s jq || \
-  { echo "ERROR: jq not found. Install jq or ensure it is in your path";
-    exit 1; }
 
 ##### Fetch Hosts
-CONFIGFILE="global.json"
+CONFIGFILE="global.hosts"
 
 [ -e ${CONFIGFILE} ] || \
   { echo "ERROR: ${CONFIGFILE} doesn't exist. Exiting"; exit 1; }
 
-HOSTS_DATA=$(jq -c '.hosts' < ${CONFIGFILE} | tr -d '{}"' | tr ':,' ' \n')
-HOSTS=$(echo "${HOSTS_DATA}" | cut -d ' ' -f1)
+HOSTS=$(tr -s ' ' < "${CONFIGFILE}" | cut -d ' ' -f2)
 
 ##### Local Variables
 SSH_CONFIG="/etc/ssh/ssh_config"
@@ -59,7 +51,8 @@ CONFIG_EOF
   fi
 
   ### CREATE HOSTS
-  IPADDRESS=$(echo "${HOSTS_DATA}" | cut -d ' ' -f2)
+  IPADDRESS=$(tr -s ' ' < "${CONFIGFILE}" | cut -d ' ' -f1)
+
   # append entry if it does not already exist
   grep -q -F "${IPADDRESS} ${HOST}" ${HOSTS_FILE} || echo "${IPADDRESS} ${HOST}" >> ${HOSTS_FILE}
 done

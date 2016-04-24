@@ -1,5 +1,5 @@
 #!/bin/sh
-# NAME: setup-all.sh (from JSON file)
+# NAME: setup-all.sh (from XML file)
 # AUTHOR: Joaquin Menchaca
 # CREATED: 2015-11-23
 # UPDATED: 2016-04-24
@@ -8,26 +8,26 @@
 #  password-less system to system communication through ssh.
 # DEPENDENCIES:
 #  * POSIX shell, POSIX Commands (cut, grep, tr)
-#  * jq utility
-#  * Global Configuration - global.json
+#  * xml2 utility
+#  * Global Configuration - global.xml
 #  * VirtualBox Guest Editions installed on guest system
 #  * Local host . directory mounted as /vagrant on guest system
 # NOTES:
 #  * This script will be run on the guest operating system
 ##### Dependencies for JSON parsing
-apt-get install -y jq
+apt-get install -y xml2
 
-which -s jq || \
-  { echo "ERROR: jq not found. Install jq or ensure it is in your path";
+which -s xml2 || \
+  { echo "ERROR: jq not found. Install xml2 or ensure it is in your path";
     exit 1; }
 
 ##### Fetch Hosts
-CONFIGFILE="global.json"
+CONFIGFILE="global.xml"
 
 [ -e ${CONFIGFILE} ] || \
   { echo "ERROR: ${CONFIGFILE} doesn't exist. Exiting"; exit 1; }
 
-HOSTS_DATA=$(jq -c '.hosts' < ${CONFIGFILE} | tr -d '{}"' | tr ':,' ' \n')
+HOSTS_DATA=$(xml2 < ${CONFIGFILE} | grep -F hosts | tr -s '/=' ' ' | cut -d' ' -f4,5)
 HOSTS=$(echo "${HOSTS_DATA}" | cut -d ' ' -f1)
 
 ##### Local Variables

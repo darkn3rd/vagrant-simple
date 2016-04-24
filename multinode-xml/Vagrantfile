@@ -1,0 +1,25 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+time = Time.now.strftime("%Y%m%d%H%M%S")
+
+# Parse XML File into Ruby hash
+require 'nori'
+parser = Nori.new(:convert_tags_to => lambda { |tag| tag.snakecase.to_s })
+xml = open("config/global.xml").read
+nodes = parser.parse(xml)['hosts']
+
+Vagrant.configure("2") do |config|
+  nodes.each do |nodename, ipaddr|
+    config.vm.define nodename do |node|
+      node.vm.box = "ubuntu/trusty64"
+      node.vm.hostname = "#{nodename}"
+      node.vm.network "private_network", ip: ipaddr
+      node.vm.provider("virtualbox") { |vbox| vbox.name = "#{nodename}_#{time}" }
+
+      # Provision
+      #node.vm.provision "shell", path: "scripts/setup-all.sh"
+      node.vm.provision "shell", path: "scripts/#{nodename}.sh"
+    end
+  end
+end

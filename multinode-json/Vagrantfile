@@ -3,9 +3,10 @@
 
 time = Time.now.strftime("%Y%m%d%H%M%S")
 
-# Open JSON file - assume file opens (Don't do this at home)
+# Parse JSON File into Ruby hash
+require 'json'
 json = open("config/global.json").read
-nodes = JSON.parse(json)
+nodes = JSON.parse(json)['hosts']
 
 Vagrant.configure("2") do |config|
   nodes.each do |nodename, ipaddr|

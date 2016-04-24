@@ -3,12 +3,10 @@
 
 time = Time.now.strftime("%Y%m%d%H%M%S")
 
-# Parse Hosts File into Ruby hash
-nodes = Hash.new
-File.readlines('config/global.hosts').map(&:chomp).each do |line|
-  ipaddr, nodename = line.split(" ")
-  nodes[nodename] = ipaddr
-end
+# Parse INI File into Ruby hash
+require 'inifile'
+inifile = IniFile.load('config/global.ini')
+nodes = inifile["hosts"]
 
 Vagrant.configure("2") do |config|
   nodes.each do |nodename, ipaddr|

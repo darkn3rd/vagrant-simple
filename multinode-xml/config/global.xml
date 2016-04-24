@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+	<client>192.168.53.23</client>
+	<master>192.168.53.24</master>
+	<slave1>192.168.53.25</slave1>
+	<slave2>192.168.53.26</slave2>

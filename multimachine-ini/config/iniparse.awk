@@ -1,4 +1,4 @@
-#!/usr/bin/env awk -f
+#!/usr/bin/awk -f
 # NAME: iniparse.awk
 # AUTHOR: Joaquin Menchaca
 # CREATED: 2016-04-24

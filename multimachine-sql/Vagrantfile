@@ -1,0 +1,53 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+############### CONSTANTS
+CONFIGFILE_DB="./config/global.db"
+CONFIGFILE_SQL="./config/global.sql"
+QUERY_HOSTS="SELECT hostname, ipaddr FROM hosts"
+QUERY_DEFAULT="SELECT hostname FROM hosts WHERE defaults = 1"
+QUERY_PORTS="SELECT hostname, guest, host FROM ports"
+############### GET CURRENT TIME
+time = Time.now.strftime("%Y%m%d%H%M%S")
+############### BUILD RUBY DATA STRUCTURE (HoHoLoH)
+# Data Structure
+settings = {'hosts'=>{}, 'ports'=>{}, 'defaults'=>{}}
+# Initialize SQLite3 and Create Database
+require 'sqlite3'
+File.delete(CONFIGFILE_DB) if File.exist?(CONFIGFILE_DB)
+db = SQLite3::Database.new(CONFIGFILE_DB)
+db = execute( ".read #{CONFIGFILE_SQL}")
+# Query Tables and stuff into hash
+db.execute( QUERY_HOSTS ) do |hostname, ipaddr|
+  settings['hosts'][hostname] = ipaddr
+end
+
+db.execute( QUERY_DEFAULT ) do |row|
+  hostname = row[0]
+  settings['defaults'][hostname] = true
+end
+
+db.execute( QUERY_PORTS ) do |hostname, guest, host|
+  (settings['ports'][hostname] ||=[]) << {'guest'=>guest, 'host'=>host}
+end
+
+############### CONFIGURE VAGRANT MACHINES
+Vagrant.configure("2") do |config|
+  settings['hosts'].each do |hostname, ipaddr|
+    default = settings['defaults'][hostname] || false
+    config.vm.define hostname, primary: default  do |node|
+      node.vm.box = "ubuntu/trusty64"
+      node.vm.hostname = "#{hostname}"
+      node.vm.network "private_network", ip: ipaddr
+      node.vm.provider("virtualbox") { |vbox| vbox.name = "#{hostname}_#{time}" }
+      if settings['ports'][hostname]
+        settings['ports'][hostname].each do |forward|
+          node.vm.network "forwarded_port", guest: forward['guest'], host: forward['host']
+        end
+      end
+      # Provision
+      node.vm.provision "shell", path: "scripts/setup-all.sh"
+      node.vm.provision "shell", path: "scripts/#{hostname}.sh"
+    end
+  end
+end

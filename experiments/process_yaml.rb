@@ -2,10 +2,8 @@
 
 time = Time.now.strftime("%Y%m%d%H%M%S")
 
-# Parse JSON File into Ruby hash
-require 'json'
-json = open("global.json").read
-settings = JSON.parse(json)
+require 'yaml'
+settings = YAML.load(File.read("global.yaml")) # HoLoHoH structure
 
 settings['hosts'].each do |hostname, ipaddr|
   puts "default: #{settings['defaults'][hostname] || false}"

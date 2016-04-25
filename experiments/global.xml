@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<root>
+<settings>
   <hosts>
     <client>192.168.53.33</client>
     <master>192.168.53.34</master>
@@ -12,14 +12,11 @@
       <host>8088</host>
     </master>
     <master>
-      <guest>15128</guest>
-      <host>5128</host>
+      <guest>3306</guest>
+      <host>13306</host>
     </master>
   </ports>
   <defaults>
-    <client>false</client>
     <master>true</master>
-    <slave1>false</slave1>
-    <slave2>true</slave2>
   </defaults>
-</root>
+</settings>

@@ -18,9 +18,6 @@
     ]
   },
   "defaults": {
-    "client": false,
-    "master": true,
-    "slave1": false,
-    "slave2": false
+    "master": true
   }
 }

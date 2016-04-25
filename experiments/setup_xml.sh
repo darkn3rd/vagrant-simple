@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # NAME: setup-all.sh (from XML file)
 # AUTHOR: Joaquin Menchaca
 # CREATED: 2015-11-23
@@ -7,7 +7,7 @@
 # PURPOSE: Configures `/etc/hosts` and global ssh configuration for each
 #  password-less system to system communication through ssh.
 # DEPENDENCIES:
-#  * POSIX shell, POSIX Commands (cut, grep, tr), xml2
+#  * GNU Bash 3+, POSIX Commands (cut, grep, tr), xml2
 #  * Global Configuration - global.xml
 #  * VirtualBox Guest Editions installed on guest system
 #  * Local host . directory mounted as /vagrant on guest system

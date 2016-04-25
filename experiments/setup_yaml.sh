@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # NAME: setup-all.sh (from YAML file)
 # AUTHOR: Joaquin Menchaca
 # CREATED: 2015-11-23
@@ -7,7 +7,7 @@
 # PURPOSE: Configures `/etc/hosts` and global ssh configuration for each
 #  password-less system to system communication through ssh.
 # DEPENDENCIES:
-#  * POSIX Shell, POSIX Commands (cut, awk, grep, sed, tr)
+#  * GNU Bash 3+, POSIX Commands (cut, awk, grep, sed, tr)
 #  * Global Configuration - global.yaml
 #  * VirtualBox Guest Editions installed on guest system
 #  * Local host . directory mounted as /vagrant on guest system

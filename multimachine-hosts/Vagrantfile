@@ -5,10 +5,8 @@
 CONFIGFILE_HOSTS="./config/global.hosts"
 CONFIGFILE_DEFAULTS="./config/global.defaults"
 CONFIGFILE_PORTS="./config/global.ports"
-
 ############### GET CURRENT TIME
 time = Time.now.strftime("%Y%m%d%H%M%S")
-
 ############### BUILD RUBY DATA STRUCTURE (HoHoLoH)
 settings = {'hosts'=>{}, 'ports'=>{}, 'defaults'=>{}}  # empty data-structure
 # Read Hosts File:  'ipaddress hostname'

@@ -10,10 +10,7 @@
         guest: 80
         host: 8088
       -
-        guest: 15128
-        host: 5128
+        guest: 3306
+        host: 13306
   defaults:
-    client: false
     master: true
-    slave1: false
-    slave2: true

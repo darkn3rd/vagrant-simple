@@ -14,9 +14,11 @@
 # NOTES:
 #  * This script will be run on the guest operating system
 
+##### Constants
 CONFIGFILE="/vagrant/config/global.hosts"
 SSH_CONFIG="/etc/ssh/ssh_config"
 HOSTS_FILE="/etc/hosts"
+
 ##### Fetch Hosts
 [ -e ${CONFIGFILE} ] || \
   { echo "ERROR: ${CONFIGFILE} doesn't exist. Exiting"; exit 1; }

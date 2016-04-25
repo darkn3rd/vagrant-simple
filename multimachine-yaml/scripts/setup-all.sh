@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# NAME: setup-all.sh (from JSON file)
+# NAME: setup-all.sh (from YAML file)
 # AUTHOR: Joaquin Menchaca
 # CREATED: 2015-11-23
 # UPDATED: 2016-04-24
@@ -7,29 +7,41 @@
 # PURPOSE: Configures `/etc/hosts` and global ssh configuration for each
 #  password-less system to system communication through ssh.
 # DEPENDENCIES:
-#  * GNU Bash 3+, POSIX Commands (cut, grep, tr), jq
-#  * Global Configuration - global.json
+#  * GNU Bash 3+, POSIX Commands (cut, awk, grep, sed, tr)
+#  * Global Configuration - global.yaml
 #  * VirtualBox Guest Editions installed on guest system
 #  * Local host . directory mounted as /vagrant on guest system
 # NOTES:
 #  * This script will be run on the guest operating system
+#  * parse_yaml from https://gist.github.com/pkuczynski/8665367
 
 ##### Constants
-CONFIGFILE="/vagrant/config/global.json"
+CONFIGFILE="/vagrant/config/global.yaml"
 SSH_CONFIG="/etc/ssh/ssh_config"
 HOSTS_FILE="/etc/hosts"
 
-##### Dependencies for JSON parsing
-apt-get install -y jq
-which -s jq || \
-  { echo "ERROR: jq not found. Install jq or ensure it is in your path";
-    exit 1; }
+##### Dependencies for YAML parsing
+parse_yaml() {
+   local prefix=$2
+   local s='[[:space:]]*' w='[a-zA-Z0-9_]*' fs=$(echo @|tr @ '\034')
+   sed -ne "s|^\($s\)\($w\)$s:$s\"\(.*\)\"$s\$|\1$fs\2$fs\3|p" \
+        -e "s|^\($s\)\($w\)$s:$s\(.*\)$s\$|\1$fs\2$fs\3|p"  $1 |
+   awk -F$fs '{
+      indent = length($1)/2;
+      vname[indent] = $2;
+      for (i in vname) {if (i > indent) {delete vname[i]}}
+      if (length($3) > 0) {
+         vn=""; for (i=0; i<indent; i++) {vn=(vn)(vname[i])("_")}
+         printf("%s%s%s=\"%s\"\n", "'$prefix'",vn, $2, $3);
+      }
+   }'
+}
 
 ##### Fetch Hosts
 [ -e ${CONFIGFILE} ] || \
   { echo "ERROR: ${CONFIGFILE} doesn't exist. Exiting"; exit 1; }
 
-HOSTS_DATA=$(jq -c '.hosts' < ${CONFIGFILE} | tr -d '{}"' | tr ':,' ' \n')
+HOSTS_DATA=$(parse_yaml ${CONFIGFILE} | grep -F hosts | sed 's/_hosts_//' | tr -s '="' ' ')
 HOSTS=$(echo "${HOSTS_DATA}" | cut -d ' ' -f1)
 
 ##### Local Variables
@@ -58,8 +70,7 @@ Host ${HOST}
 CONFIG_EOF
   fi
 
-  ### CREATE HOSTS
+  ### APPEND TO HOSTS IF EXACT ENTRY NOT EXIST
   IPADDRESS=$(echo "${HOSTS_DATA}" | grep -F "${HOST}" | cut -d ' ' -f2)
-  # append entry if it does not already exist
   grep -Fq "${IPADDRESS} ${HOST}" ${HOSTS_FILE} || echo "${IPADDRESS} ${HOST}" >> ${HOSTS_FILE}
 done

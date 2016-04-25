@@ -9,18 +9,15 @@
     "master": [
       {
         "guest": 80,
-        "host": 8088
+        "host": 8080
       },
       {
-        "guest": 15128,
-        "host": 5128
+        "guest": 3306,
+        "host": 13306
       }
     ]
   },
   "defaults": {
-    "client": false,
-    "master": true,
-    "slave1": false,
-    "slave2": false
+    "master": true
   }
 }

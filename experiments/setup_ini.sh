@@ -15,7 +15,7 @@
 # NOTES:
 #  * This script will be run on the guest operating system
 
-##### Dependencies
+##### Dependencies for INI parsing
 PARSER="./iniparse.awk"
 [ -e ${CONFIGFILE} ] || \
   { echo "ERROR: ${PARSER} is missing. Exiting"; exit 1; }
@@ -26,12 +26,12 @@ CONFIGFILE="global.ini"
 [ -e ${CONFIGFILE} ] || \
   { echo "ERROR: ${CONFIGFILE} doesn't exist. Exiting"; exit 1; }
 
-HOSTS_DATA=$(${PARSER} < ${CONFIGFILE} | grep hosts | sed 's/^hosts\.//' | tr -s '="' ' ')
+HOSTS_DATA=$(${PARSER} < ${CONFIGFILE} | grep -F hosts | sed 's/^hosts\.//' | tr -s '="' ' ')
 HOSTS=$(echo "${HOSTS_DATA}" | cut -d ' ' -f1)
 
 ##### Local Variables
 SSH_CONFIG="/etc/ssh/ssh_config"
-HOSTS_FILE="etc/hosts"
+HOSTS_FILE="/etc/hosts"
 cp /dev/null ${SSH_CONFIG}
 
 for HOST in $HOSTS; do
@@ -40,11 +40,11 @@ for HOST in $HOSTS; do
   #   * local directory on host　must be mounted on guest system as
   #　  　/vagrant (default behavior)
   #   * guest-edtitions drivers must be installed on guest
-  # Note: As these are created when the machine is brought up, they may not be available.
-  #       Thus we have to reference where they will be located in the future.
+  # Note: Refer to default Vagrant beahavior, as private_key created at time of
+  #       machine creation
   IDENTITYFILE=/vagrant/.vagrant/machines/${HOST}/virtualbox/private_key
 
-  if ! grep -q -F "Host ${HOST}" ${SSH_CONFIG}; then
+  if ! grep -qF "Host ${HOST}" ${SSH_CONFIG}; then
     ### CREATE GLOBAL SSH CONFIG
     cat <<-CONFIG_EOF >> ${SSH_CONFIG}
 Host ${HOST}
@@ -57,8 +57,7 @@ Host ${HOST}
 CONFIG_EOF
   fi
 
-  ### CREATE HOSTS
-  IPADDRESS=$(echo "${HOSTS_DATA}" | cut -d ' ' -f2)
-  # append entry if it does not already exist
-  grep -q -F "${IPADDRESS} ${HOST}" ${HOSTS_FILE} || echo "${IPADDRESS} ${HOST}" >> ${HOSTS_FILE}
+  ### APPEND TO HOSTS IF EXACT ENTRY NOT EXIST
+  IPADDRESS=$(echo "${HOSTS_DATA}" | grep -F "${HOST}" | cut -d ' ' -f2)
+  grep -Fq "${IPADDRESS} ${HOST}" ${HOSTS_FILE} || echo "${IPADDRESS} ${HOST}" >> ${HOSTS_FILE}
 done

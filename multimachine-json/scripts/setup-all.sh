@@ -21,7 +21,7 @@ HOSTS_FILE="/etc/hosts"
 
 ##### Dependencies for JSON parsing
 apt-get install -y jq
-which -s jq || \
+command -v jq || \
   { echo "ERROR: jq not found. Install jq or ensure it is in your path";
     exit 1; }
 

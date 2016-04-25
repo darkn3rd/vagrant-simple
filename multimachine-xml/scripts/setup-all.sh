@@ -21,7 +21,7 @@ HOSTS_FILE="/etc/hosts"
 
 ##### Dependencies for XML parsing
 apt-get install -y xml2
-which -s xml2 || \
+command -v xml2 || \
   { echo "ERROR: xml2 not found. Install xml2 or ensure it is in your path";
     exit 1; }
 

@@ -15,7 +15,7 @@
 #  * This script will be run on the guest operating system
 
 ##### Constants
-PARSER="./iniparse.awk"
+PARSER="/vagrant/config/iniparse.awk"
 CONFIGFILE="/vagrant/config/global.ini"
 SSH_CONFIG="/etc/ssh/ssh_config"
 HOSTS_FILE="/etc/hosts"

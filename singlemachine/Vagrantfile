@@ -9,7 +9,7 @@ Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/trusty64" # download Ubuntu 14 image
   config.vm.hostname = "example"    # stamp a hostname
   # private IP should we want to communicate directly
-  config.vm.network "private_network", ip: 192.168.53.72
+  config.vm.network "private_network", ip: "192.168.53.72"
   # User Friendly Name in VirtualBox w/ TimeStamp
   config.vm.provider("virtualbox") { |vbox| vbox.name = "example_#{time}" }
   # Forward Guest ports to host ports on Localhost (127.0.01)

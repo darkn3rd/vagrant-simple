@@ -1,3 +1,12 @@
+# NAME: Vagrantfile
+# AUTHOR: Joaquin Menchaca
+# UPDATED: 2016-04-25
+#
+# PURPOSE: Multi-Machine Demo w/ Dynamic Config from settings in INI config.
+# DEPENDENCIES:
+#  * VirtualBox, Vagrant
+#  * 'inifile' gem installed into Vagrant environment
+#
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 

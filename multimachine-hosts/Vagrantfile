@@ -1,3 +1,11 @@
+# NAME: Vagrantfile
+# AUTHOR: Joaquin Menchaca
+# UPDATED: 2016-04-25
+#
+# PURPOSE: Multi-Machine Demo w/ Dynamic Config from setting in HOSTS config.
+# DEPENDENCIES:
+#  * VirtualBox, Vagrant
+#
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 

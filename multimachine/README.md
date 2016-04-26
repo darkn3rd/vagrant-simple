@@ -1,6 +1,6 @@
 # **Multi-Machine Vagrant (Static Configuration)**
 
-This `Vagrantfile` statically configures four systems.
+This is a multi-machine Vagrant system that statically configures four systems.
 
 # **Instructions**
 

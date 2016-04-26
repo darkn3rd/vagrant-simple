@@ -2,7 +2,7 @@
 
 This is a simple single machine Vagrant system with some common variables used in configuration.
 
-# **Instructions**
+## **Instructions**
 
 ```bash
 vagrant up   # start system and provision it

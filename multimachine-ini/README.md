@@ -1,5 +1,25 @@
+# **Multi-Machine Vagrant from INI configuration file**
+
+This is a multi-machine Vagrant system that dynamically configures four systems from INI configuration file.  
+
+Provisioning scripts will make changes to `/etc/hosts` and `/etc/ssh/ssh_config` for easy access between systems.
+
+## **Prerequisites**
+
+```
+vagrant plugin install inifile
+```
+
+## **Nerd Notes**
+
+The `Vagrantfile` demonstrates transforming a 2-dimensional data-structure (hash of hash) to a 4-dimensional data-structure (hash of hash of list of hash).
+
+# **Instructions**
 
 ```bash
-bundle install
-vagrant up
+vagrant up          # start and provision all systems
+vagrant ssh         # ssh into master
+vagrant ssh client  # ssh into client
+vagrant halt client # shutdown client
+vagrant halt        # shutdown reaming systems
 ```

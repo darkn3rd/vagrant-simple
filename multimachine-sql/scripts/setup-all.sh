@@ -23,7 +23,7 @@ HOSTS_FILE="/etc/hosts"
 
 ##### Dependencies for YAML parsing
 sudo apt-get -y install sqlite3
-which -s sqlite3 || \
+command -v sqlite3 || \
   { echo "ERROR: sqlite3 not found. Install sqlite3 or ensure it is in your path";
     exit 1; }
 

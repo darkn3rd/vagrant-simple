@@ -1,5 +1,7 @@
 # **Simple Vagrant Demoes**
 
+by Joaquin Menchaca
+
 This illustrates how to create simple Vagrant systems using datafile format of your choosing, e.g. INI, YAML, JSON, XML, or Hosts.
 
 This is an exercise in automating Vagrant, specifically using ruby scripting.  It is also an exercise in crafting provisioning scripts in Bash (Bourne Again Shell).
@@ -91,5 +93,10 @@ Things you would want to do if using professionally:
   * json2yaml - https://www.npmjs.com/package/yamljs
   * shyaml - https://github.com/0k/shyaml
 * Ruby Gems
-  * [Nori](https://rubygems.org/gems/nori/versions/2.6.0) - XML to Hash Translator
-  * [inifile](https://rubygems.org/gems/inifile) - INI to Hash
+  * [nori](https://rubygems.org/gems/nori/versions/2.6.0) - XML to ruby hash ruby gem
+  * [inifile](https://rubygems.org/gems/inifile) - ini to ruby hahs ruby gem
+  * [sqlite3](https://rubygems.org/gems/sqlite3) - sqlite3 ruby gem
+
+## **License**
+
+The content of this project itself is licensed under the [Creative Commons Attribution 3.0 license](http://creativecommons.org/licenses/by/3.0/us/deed.en_US), and the underlying source code used to format and display that content is licensed under the [MIT license](http://opensource.org/licenses/mit-license.php).

@@ -2,23 +2,62 @@
 
 This illustrates how to create simple Vagrant systems using datafile format of your choosing, e.g. INI, YAML, JSON, XML, or Hosts.
 
-This is an exercise in automating Vagrant, specifically using ruby.  It is also an exercise in crafting provisioning scripts in Bash (or other language).
+This is an exercise in automating Vagrant, specifically using ruby scripting.  It is also an exercise in crafting provisioning scripts in Bash (Bourne Again Shell).
 
-## **Data Format**
+## **Requirements**
+
+* [VirtualBox](https://www.virtualbox.org/wiki/Downloads) - virtualization system
+* [Vagrant](http://vagrantup.com/) - virtualization and provisioning automation tool
+
+For Windows, highly recommend, [MSYS2](https://msys2.github.io/) as it gives you to `bash` shell and access to tools like `git`, `ssh`, `curl`, and `rsync`.  This is optional.
+
+### **OS X**
+
+Install [Homebrew](http://brew.sh/), [Cask](https://caskroom.github.io/), and [Brew Bundle](https://github.com/Homebrew/homebrew-bundle), then get other requirements by running:
+
+```bash
+$ brew bundle
+$ vagrant plugin install sqlite3
+$ vagrant plugin install inifile
+```
+
+### **Windows**
+
+Install [Chocolately](chocolately) using command shell (`cmd.exe`) as Administrator, then run
+
+```batch
+C:\> choco install chocolately.config
+C:\> vagrant plugin install sqlite3
+C:\> vagrant plugin install inifile
+```
+
+Open MSYS2 application, run:
+
+```bash
+$ pacman --needed -Sy bash pacman pacman-mirrors msys2-runtime
+$ # close and re-open msys2
+$ pacman -Su
+```
+
+## **About this Project**
+
+### **Data Format**
 
 The data is a 4D data structure (hash of hash of list of hash) to spice things up.  Each section is divided into of configuration area: `hosts`, `defaults`, and `ports`.  Thus there may be redundancy.  
 
-The provisioning scripts only care about hosts, so they'll try to rip this out into arrays to use the data (again, keeping it simple, we could use ksh or bash4 associative arrays).
+The provisioning scripts only care about `hosts` key, so they'll try to rip this out into arrays to use the data.  This is used to configure `hosts` and `ssh_config` for ssh and name resolution convenience.
 
-## **Robust Code**
+### **Robust Code**
 
-Robust code, this is not.  The sample code is just for illustrative purposes. Don't do this at home.
+Robust code, this is not.  The sample code is just for illustrative purposes. Don't do this at home!
 
-Things you would want to do:
- * Don't trust file exist, check for it, or handle the exception, and print out purdy message for the user.
- * Don't trust data is clean, such as system designated as primary, there can only be one.
+Things you would want to do if using professionally:
+ * ***Don't trust that the file exist!*** check for it, or at least handle the exception, and print out *purdy* message for the user.
+ * ***Don't trust data is clean!*** Example, two systems can be defaulted to be the primary, there can only be one.
 
-## Research
+### **Final Notes**
+
+### **Research**
 
 * Vagrant Multi-Machine Docs: https://www.vagrantup.com/docs/multi-machine/
 * Bash
@@ -37,13 +76,3 @@ Things you would want to do:
 * Ruby Gems
   * [Nori](https://rubygems.org/gems/nori/versions/2.6.0) - XML to Hash Translator
   * [inifile](https://rubygems.org/gems/inifile) - INI to Hash
-
-```bash
-apt-get install -y jq xml2 node
-```
-
-
-* http://zetcode.com/db/sqliteruby/
-* http://zetcode.com/db/sqlite/
-* http://stackoverflow.com/questions/9917225/how-do-i-use-ruby-to-connect-to-a-sqlite3-database-outside-of-rails-as-a-scripti
-* http://ruby.bastardsbook.com/chapters/sql/

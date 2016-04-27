@@ -1,25 +1,41 @@
+# NAME: Vagrantfile
+# AUTHOR: Joaquin Menchaca
+# UPDATED: 2016-04-25
+#
+# PURPOSE: Multi-Machine Demo w/ Dynamic Config from settings in XML.
+# DEPENDENCIES:
+#  * VirtualBox, Vagrant
+#
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+############### CONSTANTS
+CONFIGFILE="./config/global.xml"
+############### GET CURRENT TIME
 time = Time.now.strftime("%Y%m%d%H%M%S")
-
-# Parse XML File into Ruby hash
+############### BUILD RUBY DATA STRUCTURE (HoHoLoH)
 require 'nori'
 parser = Nori.new(:convert_tags_to => lambda { |tag| tag.snakecase.to_s })
-xml = open("config/global.xml").read
-nodes = parser.parse(xml)['hosts']
+xml = open(CONFIGFILE).read
+settings = parser.parse(xml)['settings'] # retreive * under parent element
 
+############### CONFIGURE VAGRANT MACHINES
 Vagrant.configure("2") do |config|
-  nodes.each do |nodename, ipaddr|
-    config.vm.define nodename do |node|
+  settings['hosts'].each do |hostname, ipaddr|
+    default = settings['defaults'][hostname] || false
+    config.vm.define hostname, primary: default  do |node|
       node.vm.box = "ubuntu/trusty64"
-      node.vm.hostname = "#{nodename}"
+      node.vm.hostname = "#{hostname}"
       node.vm.network "private_network", ip: ipaddr
-      node.vm.provider("virtualbox") { |vbox| vbox.name = "#{nodename}_#{time}" }
-
+      node.vm.provider("virtualbox") { |vbox| vbox.name = "#{hostname}_#{time}" }
+      if settings['ports'][hostname]
+        settings['ports'][hostname].each do |forward|
+          node.vm.network "forwarded_port", guest: forward['guest'], host: forward['host']
+        end
+      end
       # Provision
-      #node.vm.provision "shell", path: "scripts/setup-all.sh"
-      node.vm.provision "shell", path: "scripts/#{nodename}.sh"
+      node.vm.provision "shell", path: "scripts/setup-all.sh"
+      node.vm.provision "shell", path: "scripts/#{hostname}.sh"
     end
   end
 end

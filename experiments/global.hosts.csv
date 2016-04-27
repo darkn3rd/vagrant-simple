@@ -1,0 +1,5 @@
+hostname,ipaddr,defaults
+client,192.168.53.63,
+master,192.168.53.64,1
+slave1,192.168.53.65,
+slave2,192.168.53.66,

@@ -1,0 +1,50 @@
+# NAME: Vagrantfile
+# AUTHOR: Joaquin Menchaca
+# UPDATED: 2016-04-25
+#
+# PURPOSE: Multi-Machine Demo w/ Dynamic Config from settings in CSV tables.
+# DEPENDENCIES:
+#  * VirtualBox, Vagrant
+#
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+############### CONSTANTS
+CONFIGFILE_HOSTS="./config/global.hosts.csv"
+CONFIGFILE_PORTS="./config/global.ports.csv"
+############### GET CURRENT TIME
+time = Time.now.strftime("%Y%m%d%H%M%S")
+############### BUILD RUBY DATA STRUCTURE (HoHoLoH)
+settings = {'hosts'=>{}, 'ports'=>{}, 'defaults'=>{}}
+
+require 'csv'
+# SELECT * FROM global.host.csv
+CSV.foreach(CONFIGFILE_HOSTS, :headers => true) do |row|
+  settings['hosts'][row['hostname']] = row['ipaddr']
+  settings['defaults'][row['hostname']] = true if row['defaults'] == "1"
+end
+# SELECT * FROM global.ports.csv
+CSV.foreach(CONFIGFILE_PORTS, :headers => true) do |row|
+  (settings['ports'][row['hostname']] ||=[]) << {'guest'=>row['guest'], 'host'=>row['host']}
+end
+
+############### CONFIGURE VAGRANT MACHINES
+Vagrant.configure("2") do |config|
+  settings['hosts'].each do |hostname, ipaddr|
+    default = settings['defaults'][hostname] || false
+    config.vm.define hostname, primary: default  do |node|
+      node.vm.box = "ubuntu/trusty64"
+      node.vm.hostname = "#{hostname}"
+      node.vm.network "private_network", ip: ipaddr
+      node.vm.provider("virtualbox") { |vbox| vbox.name = "#{hostname}_#{time}" }
+      if settings['ports'][hostname]
+        settings['ports'][hostname].each do |forward|
+          node.vm.network "forwarded_port", guest: forward['guest'], host: forward['host']
+        end
+      end
+      # Provision
+      node.vm.provision "shell", path: "scripts/setup-all.sh"
+      node.vm.provision "shell", path: "scripts/#{hostname}.sh"
+    end
+  end
+end

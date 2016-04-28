@@ -12,16 +12,16 @@ This is an exercise in automating [Vagrant](https://www.vagrantup.com/), specifi
     - [Single Machine](singlemachine/README.md)  
     - [Multi-Machine](multimachine/README.md)
 - Dynamic Multi-Machine
-    - Data-structure in Memory
-       - [Using Ruby Hash](multimachine-mem/README.md)
-  - Data-structure from File
-       - [Hosts configuration file](multimachine-hosts/README.md)
-       - [INI configuration file](multimachine-ini/README.md)
-       - [CSV tables](multimachine-csv/README.md)
-       - [SQL tables](multimachine-sql/README.md)
-       - [JSON tree](multimachine-json/README.md)
-       - [YAML tree](multimachine-yaml/README.md)
-       - [XML tree](multimachine-xml/README.md)
+     - Data-structure in Memory
+        - [Using Ruby Hash](multimachine-mem/README.md)
+     - Data-structure from File
+        - [Hosts configuration file](multimachine-hosts/README.md)
+        - [INI configuration file](multimachine-ini/README.md)
+        - [CSV tables](multimachine-csv/README.md)
+        - [SQL tables](multimachine-sql/README.md)
+        - [JSON tree](multimachine-json/README.md)
+        - [YAML tree](multimachine-yaml/README.md)
+        - [XML tree](multimachine-xml/README.md)
 
 ## **Requirements**
 

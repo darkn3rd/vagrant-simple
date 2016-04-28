@@ -75,6 +75,7 @@ The provisioning scripts only care about `hosts` key, so they'll try to rip this
 Robust code, this is not.  The sample code is just for illustrative purposes. Don't do this at home!
 
 Things you would want to do if using professionally:
+
     - ***Don't trust that the file exist!*** check for it, or at least handle the exception, and print out *purdy* message for the user.
     - ***Don't trust data is clean!*** Example, two systems can be defaulted to be the primary, there can only be one.
 

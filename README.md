@@ -50,17 +50,7 @@ C:\> vagrant plugin install sqlite3
 C:\> vagrant plugin install inifile
 ```
 
-If using MSYS2, open MSYS2 application, and run:
 
-```bash
-$ pacman --needed -Sy bash pacman pacman-mirrors msys2-runtime
-```
-
-Close and restart MSYS2 and run:
-
-```bash
-$ pacman -Su
-```
 
 ## **About this Project**
 
@@ -79,17 +69,56 @@ Things you would want to do if using professionally:
   * ***Don't trust that the file exist!*** check for it, or at least handle the exception, and print out *purdy* message for the user.
   * ***Don't trust data is clean!*** Example, two systems can be defaulted to be the primary, there can only be one.
 
+***Example***:
+
+```ruby
+begin
+   file = open("config/global.json")
+ rescue StandardError=>e
+   puts "Error: #{e}"
+ else
+   settings = JSON.parse(file.read)
+end
+```
+
 ### **Final Notes**
+
+### **MSYS2**
+
+[MSYS2](https://msys2.github.io/) is a light minimalist bash environment for Windows, similar to [MSYS](http://www.mingw.org/wiki/msys) that comes with [MinGW](http://www.mingw.org/) (Minimalist GNU for Windows
+) and [Git-Bash](https://git-for-windows.github.io/) tools, except that it is 64-bit.  If you use advanced features like rsync, then you'll need a 64-bit rsync solution.
+
+After installing [MSYS2](https://msys2.github.io/), e.g. `choco install msys2`, run:
+
+```bash
+$ pacman --needed -Sy bash pacman pacman-mirrors msys2-runtime
+```
+
+Close and restart MSYS2 and run:
+
+```bash
+$ pacman -Su
+$ # other tools (optional)
+$ pacman -S rsync
+$ pacman -S git
+$ pacman -S curl
+```
 
 ### **Research**
 
-* Vagrant Multi-Machine Docs: https://www.vagrantup.com/docs/multi-machine/
+These are some topics I came across while researching Vagrant, Ruby libraries and shell command-line tools and scripts:
+
+* Vagrant
+    * Multi-Machine Docs: https://www.vagrantup.com/docs/multi-machine/
+    * Vagrant 1.5 Plugin Improvements: https://www.hashicorp.com/blog/vagrant-1-5-plugin-improvements.html#toc_1
+    * Vagrant Development Basics: https://www.vagrantup.com/docs/plugins/development-basics.html
+    * Vagrant Packaging: https://www.vagrantup.com/docs/plugins/packaging.html
 * Bash
     * Bash Ini Parser - http://theoldschooldevops.com/2008/02/09/bash-ini-parser/
     * Parse Yaml Script - https://gist.github.com/pkuczynski/8665367
     * JSON.sh - https://github.com/dominictarr/JSON.sh
 * Command Line Tools
-    * jq - https://stedolan.github.io/jq/
+    * jq (JSON Query)- https://stedolan.github.io/jq/
     * xml2 - http://www.ofb.net/~egnor/xml2/
     * json2csv - https://github.com/jehiah/json2csv
     * xml2json - https://github.com/Inist-CNRS/node-xml2json-command
@@ -99,7 +128,7 @@ Things you would want to do if using professionally:
     * shyaml - https://github.com/0k/shyaml
 * Ruby Gems
     * [nori](https://rubygems.org/gems/nori/versions/2.6.0) - XML to ruby  hash ruby gem
-    * [inifile](https://rubygems.org/gems/inifile) - ini to ruby hahs ruby gem
+    * [inifile](https://rubygems.org/gems/inifile) - ini to ruby hash ruby gem
     * [sqlite3](https://rubygems.org/gems/sqlite3) - sqlite3 ruby gem
 
 ## **License**

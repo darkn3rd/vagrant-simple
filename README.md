@@ -1,10 +1,10 @@
 # **Simple Vagrant Demoes**
 
-by Joaquin Menchaca
+by Joaquin Menchaca, April 2016
 
-This illustrates how to create simple Vagrant systems using data file format of your choosing, e.g. INI, YAML, JSON, XML, or Hosts.
+This illustrates how to create simple [Vagrant](https://www.vagrantup.com/) systems using data file format of your choosing, e.g. INI, YAML, JSON, XML, or Hosts.
 
-This is an exercise in automating Vagrant, specifically using ruby scripting.  It is also an exercise in crafting provisioning scripts in Bash (Bourne Again Shell).
+This is an exercise in automating [Vagrant](https://www.vagrantup.com/), specifically using ruby scripting.  It is also an exercise in crafting provisioning scripts in Bash (Bourne Again Shell).
 
 ## **Examples**
 
@@ -50,8 +50,6 @@ C:\> vagrant plugin install sqlite3
 C:\> vagrant plugin install inifile
 ```
 
-
-
 ## **About this Project**
 
 ### **Data Format**
@@ -81,7 +79,7 @@ begin
 end
 ```
 
-### **Final Notes**
+## **Final Notes**
 
 ### **MSYS2**
 
@@ -104,7 +102,7 @@ $ pacman -S git
 $ pacman -S curl
 ```
 
-### **Research**
+### **Research Links**
 
 These are some topics I came across while researching Vagrant, Ruby libraries and shell command-line tools and scripts:
 

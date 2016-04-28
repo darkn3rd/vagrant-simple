@@ -4,7 +4,7 @@ This is a multi-machine Vagrant system that dynamically configures four systems 
 
 ## **Notes**
 
-When visiting any guest machine, e.g. `vagrant ssh client`, you can only get to other systems through using IP address, `ssh vagrant@192.168.53.84`.
+When visiting any guest machine, e.g. `vagrant ssh client`, you can only get to other systems through using the username and IP address, `ssh vagrant@192.168.53.84`.
 
 ## **Instructions**
 

@@ -1,6 +1,6 @@
 # **Single Machine Vagrant**
 
-This is a simple single machine Vagrant system with some common variables used in configuration.
+This is a simple single machine Vagrant system.  Some popular options are configured in the `Vagrantfile`.
 
 ## **Instructions**
 

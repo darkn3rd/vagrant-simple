@@ -91,14 +91,24 @@ def get_ssh_config():
         ansible_config = {}
         ansible_config['ansible_ssh_private_key_file'] = ".vagrant/machines/{0}/virtualbox/private_key".format(hostname)
         ansible_config['ansible_ssh_user'] = 'vagrant'
-        ansible_config['ansible_ssh_port'] = '22'
         ansible_config['ansible_ssh_host'] = ip
         hostvars[hostname] = ansible_config
 
     return hostvars
 
+def get_a_ssh_config(box_name):
+    ansible_config = {}
+
+    # build hostvars dictionary from global hosts file
+    for line in open(_config).readlines():
+        ip, hostname = line.strip().split()
+        if hostname == box_name:
+            ansible_config['ansible_ssh_private_key_file'] = ".vagrant/machines/{0}/virtualbox/private_key".format(box_name)
+            ansible_config['ansible_ssh_user'] = 'vagrant'
+            ansible_config['ansible_ssh_host'] = ip
+            break
+
+    return ansible_config
 
 if __name__ == "__main__":
     main()
-
-

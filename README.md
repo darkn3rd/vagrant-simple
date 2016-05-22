@@ -128,6 +128,10 @@ These are some topics I came across while researching Vagrant, Ruby libraries an
     * [nori](https://rubygems.org/gems/nori/versions/2.6.0) - XML to ruby  hash ruby gem
     * [inifile](https://rubygems.org/gems/inifile) - ini to ruby hash ruby gem
     * [sqlite3](https://rubygems.org/gems/sqlite3) - sqlite3 ruby gem
+* Python Packages
+    * [simplejson](https://pypi.python.org/pypi/simplejson/) - SimpleJSON python module
+    * [pyaml](https://pypi.python.org/pypi/pyaml/) - PyYAML
+    * [configparser](https://pypi.python.org/pypi/configparser) - ConfigParser for INI files
 
 ## **License**
 

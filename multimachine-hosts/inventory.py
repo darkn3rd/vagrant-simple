@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
-Vagrant external inventory script. Automatically finds the IP of the booted vagrant vm(s), and
-returns it under the host group 'vagrant'
+Vagrant external inventory script. Automatically finds the IP of the configured
+vagrant vm(s), and returns it under the host group 'vagrant'
 
 Example Vagrant configuration using this script:
 
@@ -45,7 +45,12 @@ except:
 _config = 'config/global.hosts'
 _group = 'vagrant'  # a default group
 
-
+#######
+# main()
+#
+# description: parse options and return ansible formated json object
+#              representing 1+ vagrant boxes (virtual systems)
+##########################################
 def main():
     # Options
     # ------------------------------
@@ -81,7 +86,11 @@ def main():
         sys.exit(0)
 
 
-# get all the ssh configs for all boxes in an array of dictionaries.
+#######
+# get_ssh_config()
+#
+# description: return dictionary of an ansible configs for all boxes
+##########################################
 def get_ssh_config():
     hostvars = {}
 
@@ -96,17 +105,24 @@ def get_ssh_config():
 
     return hostvars
 
+#######
+# get_a_ssh_config(box_name)
+#
+# description: return dictionary of an ansible config for single box
+##########################################
 def get_a_ssh_config(box_name):
     ansible_config = {}
 
-    # build hostvars dictionary from global hosts file
+    # find line with matching hostname
     for line in open(_config).readlines():
         ip, hostname = line.strip().split()
         if hostname == box_name:
-            ansible_config['ansible_ssh_private_key_file'] = ".vagrant/machines/{0}/virtualbox/private_key".format(box_name)
-            ansible_config['ansible_ssh_user'] = 'vagrant'
-            ansible_config['ansible_ssh_host'] = ip
             break
+
+    # build return structure given ip from last line fetched
+    ansible_config['ansible_ssh_private_key_file'] = ".vagrant/machines/{0}/virtualbox/private_key".format(box_name)
+    ansible_config['ansible_ssh_user'] = 'vagrant'
+    ansible_config['ansible_ssh_host'] = ip
 
     return ansible_config
 

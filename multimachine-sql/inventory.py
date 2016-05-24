@@ -128,7 +128,7 @@ def get_ssh_config():
 ##########################################
 def get_a_ssh_config(box_name):
     ansible_config = {}
-    QUERY_IP = "SELECT hostname, ipaddr FROM hosts WHERE hostname = '{0}'"
+    QUERY_IP = "SELECT ipaddr FROM hosts WHERE hostname = '{0}'"
 
     con = None
 
@@ -136,7 +136,7 @@ def get_a_ssh_config(box_name):
         con = sqlite3.connect(_config)
         cur = con.cursor()
         cur.execute(QUERY_IP.format(box_name))
-        ip = cur.fetchone()[1]  # second column is the ip
+        ip = cur.fetchone()[0] # dereference
     except sqlite3.Error, e:
         print "Error %s:" % e.args[0]
         sys.exit(1)

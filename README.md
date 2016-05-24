@@ -137,6 +137,7 @@ These are some topics I came across while researching Vagrant, Ruby libraries an
        * [SQLite Python Tutorial](http://zetcode.com/db/sqlitepythontutorial/)
        * [Python Database API Specification v2.0](https://www.python.org/dev/peps/pep-0249/#cursor-methods)
        * [CSV File Reading and Writing](https://docs.python.org/2/library/csv.html)
+       * [http://docs.python-guide.org/en/latest/scenarios/xml/](http://docs.python-guide.org/en/latest/scenarios/xml/)
 
 
 ## **License**

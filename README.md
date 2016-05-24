@@ -132,6 +132,10 @@ These are some topics I came across while researching Vagrant, Ruby libraries an
     * [simplejson](https://pypi.python.org/pypi/simplejson/) - SimpleJSON python module
     * [pyaml](https://pypi.python.org/pypi/pyaml/) - PyYAML
     * [configparser](https://pypi.python.org/pypi/configparser) - ConfigParser for INI files
+* Tutorials
+    * Python
+       * [SQLite Python Tutorial](http://zetcode.com/db/sqlitepythontutorial/)
+
 
 ## **License**
 

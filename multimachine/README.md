@@ -2,7 +2,7 @@
 
 This is a multi-machine Vagrant system that statically configures four systems.
 
-# **Instructions**
+## **Instructions**
 
 ```bash
 vagrant up          # start and provision all systems

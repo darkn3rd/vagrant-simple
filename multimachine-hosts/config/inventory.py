@@ -44,7 +44,7 @@ except:
     import simplejson as json
 
 _script_home = os.path.dirname(os.path.realpath(__file__))
-_config = "{}/global.hosts".format(_script_home)
+_config = os.environ.get('VAGRANT_CONFIG') or "{}/global.hosts".format(_script_home)
 _group = 'vagrant'  # a default group
 
 #######

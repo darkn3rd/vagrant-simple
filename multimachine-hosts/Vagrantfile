@@ -13,6 +13,11 @@ CONFIGFILE     = ENV['VAGRANT_CONFIG'] || './config/global.hosts'
 CONFIGTYPE     = CONFIGFILE.split(/\./)[-1]
 VAGRANT_PARSE  = "#{Dir.pwd}/../scriptlib/#{CONFIGTYPE}.vagrantfile"
 VAGRANT_CREATE = "#{Dir.pwd}/../scriptlib/common.vagrantfile"
+BASE_LIBRARY   = "#{Dir.pwd}/../scriptlib/baselib.src"
+LOCAL_LIBRARY  = "#{Dir.pwd}/scripts/baselib.src"
+
+############### COPY LOCAL LIBRARY
+FileUtils.cp(BASE_LIBRARY, LOCAL_LIBRARY)
 
 ############### BUILD DATASTRUCTURE
 if File.file?("#{VAGRANT_PARSE}")

@@ -35,6 +35,7 @@ Example Vagrant configuration using this script:
 #
 
 import sys
+import os
 from optparse import OptionParser
 from collections import defaultdict
 try:
@@ -42,7 +43,8 @@ try:
 except:
     import simplejson as json
 
-_config = 'config/global.hosts'
+_script_home = os.path.dirname(os.path.realpath(__file__))
+_config = "{}/global.hosts".format(_script_home)
 _group = 'vagrant'  # a default group
 
 #######

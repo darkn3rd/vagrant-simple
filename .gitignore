@@ -3,4 +3,3 @@ Gemfile.lock
 .DS_Store
 *.db
 .idea
-scripts/baselib.src

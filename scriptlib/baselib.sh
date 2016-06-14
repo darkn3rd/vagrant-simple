@@ -31,7 +31,7 @@ install() {
     apt-get -y install ${PACKAGE}
   fi
 
-  command -v ${PACKAGE} || \
+  command -v ${PACKAGE}  > /dev/null || \
     { echo "ERROR: ${PACKAGE} not found. Install ${PACKAGE} or ensure it is in your path";
       return 3; }
 }

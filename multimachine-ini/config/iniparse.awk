@@ -6,6 +6,9 @@
 # PURPOSE: Flatten INI files with section prepended like 'section.key=value'
 # DEPENDENCIES:
 #  * POSIX Awk (which includes GNU Awk)
+# INSTRUCTIONS:
+#  ./iniparse.awk < global.ini
+
 !/^$/ {
   if ((start = index($0, "[")) != 0) {
       size = index(substr($0, start + 1), "]")

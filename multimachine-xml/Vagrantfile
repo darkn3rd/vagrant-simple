@@ -10,32 +10,22 @@
 # vi: set ft=ruby :
 
 ############### CONSTANTS
-CONFIGFILE="./config/global.xml"
-############### GET CURRENT TIME
-time = Time.now.strftime("%Y%m%d%H%M%S")
-############### BUILD RUBY DATA STRUCTURE (HoHoLoH)
-require 'nori'
-parser = Nori.new(:convert_tags_to => lambda { |tag| tag.snakecase.to_s })
-xml = open(CONFIGFILE).read
-settings = parser.parse(xml)['settings'] # retreive * under parent element
+CONFIGFILE     = ENV['VAGRANT_CONFIG'] || './config/global.xml'
+CONFIGTYPE     = CONFIGFILE.split(/\./)[-1]
+VAGRANT_PARSE  = "#{Dir.pwd}/../scriptlib/#{CONFIGTYPE}.vagrantfile"
+VAGRANT_CREATE = "#{Dir.pwd}/../scriptlib/common.vagrantfile"
+BASE_LIBRARY   = "#{Dir.pwd}/../scriptlib/baselib.sh"
+LOCAL_LIBRARY  = "#{Dir.pwd}/scripts/baselib.src"
+
+############## COPY LOCAL LIBRARY
+FileUtils.cp(BASE_LIBRARY, LOCAL_LIBRARY, :preserve => false)
+
+############### BUILD DATASTRUCTURE
+if File.file?("#{VAGRANT_PARSE}")
+   eval File.read("#{VAGRANT_PARSE}")
+end
 
 ############### CONFIGURE VAGRANT MACHINES
-Vagrant.configure("2") do |config|
-  settings['hosts'].each do |hostname, ipaddr|
-    default = settings['defaults'][hostname] || false
-    config.vm.define hostname, primary: default  do |node|
-      node.vm.box = "ubuntu/trusty64"
-      node.vm.hostname = "#{hostname}"
-      node.vm.network "private_network", ip: ipaddr
-      node.vm.provider("virtualbox") { |vbox| vbox.name = "#{hostname}_#{time}" }
-      if settings['ports'][hostname]
-        settings['ports'][hostname].each do |forward|
-          node.vm.network "forwarded_port", guest: forward['guest'], host: forward['host']
-        end
-      end
-      # Provision
-      node.vm.provision "shell", path: "scripts/setup-all.sh"
-      node.vm.provision "shell", path: "scripts/#{hostname}.sh"
-    end
-  end
+if File.file?("#{VAGRANT_CREATE}")
+   eval File.read("#{VAGRANT_CREATE}")
 end

@@ -9,5 +9,5 @@ vagrant up          # start and provision all systems
 vagrant ssh         # ssh into master
 vagrant ssh client  # ssh into client
 vagrant halt client # shutdown client
-vagrant halt        # shutdown reaming systems
+vagrant halt        # shutdown all systems
 ```

@@ -2,11 +2,11 @@
 
 by Joaquin Menchaca, April 2016
 
-This exercise that demonstrates [Vagrant](https://www.vagrantup.com/) configuration scenarios, which can use a global configuration file to configure and provision itself.  An Ansible dynamic inventory script that uses this same data is also provided.
+This exercise that demonstrates [Vagrant](https://www.vagrantup.com/) configuration scenarios with a global configuration file.  As a bonus, an [Ansible](https://www.ansible.com/) dynamic inventory script that sources the same configuration file is provided.
 
-As the configuration, provisioning, and inventory script use different languages, this exercise also demonstrates how to parse the configuration in [ruby](https://www.ruby-lang.org/en/), [python](https://www.python.org/), and [bash](https://www.gnu.org/software/bash/).  The configuration files are in **INI**, **YAML**, **JSON**, **XML**, **CSV**, **SQL**, or **hosts**.
+This demonstrates how to parse a configuration file (in **INI**, **YAML**, **JSON**, **XML**, **CSV**, **SQL**, or **hosts** file formats) in [ruby](https://www.ruby-lang.org/en/), and [bash](https://www.gnu.org/software/bash/). amd [python](https://www.python.org/) languages.
 
-## **Examples**
+## **Example Scenarios**
 
 - Static Configuration
     - [Single Machine](singlemachine/README.md)  
@@ -27,12 +27,12 @@ As the configuration, provisioning, and inventory script use different languages
 
 * [VirtualBox](https://www.virtualbox.org/wiki/Downloads) - virtualization system
 * [Vagrant](http://vagrantup.com/) - virtualization and provisioning automation tool
-* [Ansible](https://www.ansible.com/) - optional change configuration tool that can execute commands on vagrant virtual systems.
+* [Ansible](https://www.ansible.com/) (optional) - change configuration tool that can execute commands on vagrant virtual systems.
    * [Python](https://www.python.org/) - language required by Ansible
 
 For Windows, highly recommend, [MSYS2](https://msys2.github.io/) as it gives you to `bash` shell and access to tools like `git`, `ssh`, `curl`, and `rsync`.  This is optional.
 
-Note that [Ansible](https://www.ansible.com/) is not officially supported on Windows.
+Note that [Ansible](https://www.ansible.com/) is not officially supported on Windows for a workstation (or system used to configure other systems).
 
 ### **OS X**
 
@@ -56,29 +56,34 @@ C:\> vagrant plugin install inifile
 
 ### **Data Format**
 
-The data is a 4D data structure (hash of hash of list of hash) to spice things up.  Each section is divided into of configuration area: `hosts`, `defaults`, and `ports`.  Thus there may be redundancy.  
+The data is a 4D data structure (*hash of hash of list of hash*) to spice things up.  Each section is divided into of configuration area: `hosts`, `defaults`, and `ports`.  Thus there may be redundancy.  
 
-The provisioning scripts only care about `hosts` key, so they'll try to rip this out into arrays to use the data.  This is used to configure `hosts` and `ssh_config` for ssh and name resolution convenience.
+The provisioning and inventory scripts only care about `hosts` key, so they'll try to rip this out into arrays to use the data.  This is used to configure `hosts` and `ssh_config` for ssh and name resolution convenience.  For the inventory,this is used to create a `JSON` file that can be used with `ansible` or `ansible-playbook` commands.
 
-### **Robust Code**
+### **Organization**
 
-Robust code, this is not.  The sample code is just for illustrative purposes. Don't do this at home!
+This is what the base file layout looks like, using YAML as an example:
 
-Things you would want to do if using professionally:
-
-  * ***Don't trust that the file exist!*** check for it, or at least handle the exception, and print out *purdy* message for the user.
-  * ***Don't trust data is clean!*** Example, two systems can be defaulted to be the primary, there can only be one.
-
-***Example***:
-
-```ruby
-begin
-   file = open("config/global.json")
- rescue StandardError=>e
-   puts "Error: #{e}"
- else
-   settings = JSON.parse(file.read)
-end
+```bash
+.
+├── multimachine-yaml
+│   ├── README.md
+│   ├── Vagrantfile        # main ansible configuration
+│   ├── config
+│   │   ├── global.yaml    # global configuration
+│   │   └── inventory.py   # ansinble inventory script, must be next to config
+│   └── scripts
+│       ├── baselib.src    # local copy of baselib.sh
+│       ├── client.sh      # provisioning script
+│       ├── master.sh      # provisioning script
+│       ├── setup-base.sh  # base provisioning script for ssh_config and hosts
+│       ├── slave.sh       # provisioning script
+│       ├── slave1.sh -> slave.sh # symlink to common provisioning script
+│       └── slave2.sh -> slave.sh # symlink to common provisioning script
+└── scriptlib
+    ├── baselib.sh         # main shell provisioning library
+    ├── common.vagrantfile # common base vagrantfile that uses settings hash
+    └── yaml.rb            # creates settings hash from ruby
 ```
 
 ## **Final Notes**

@@ -18,4 +18,4 @@ pip install --upgrade pip setuptools
 # Install Ansible
 sudo -H pip install ansible
 # Install Other Libraries
-pip install requirements
+pip install -r requirements.txt

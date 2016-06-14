@@ -9,7 +9,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 ############### GET CURRENT TIME
-time = Time.now.strftime("%Y%m%d%H%M%S")
+@time = Time.now.strftime("%Y%m%d%H%M%S")
 
 ############### CONFIGURE VAGRANT MACHINES
 Vagrant.configure("2") do |config|
@@ -17,7 +17,7 @@ Vagrant.configure("2") do |config|
     client.vm.box = "ubuntu/trusty64"
     client.vm.hostname = "client"
     client.vm.network "private_network", ip: "192.168.53.73"
-    client.vm.provider("virtualbox") { |vbox| vbox.name = "client_#{time}" }
+    client.vm.provider("virtualbox") { |vbox| vbox.name = "client_#{@time}" }
     client.vm.provision "shell", path: "scripts/client.sh"
   end
 
@@ -25,7 +25,7 @@ Vagrant.configure("2") do |config|
     master.vm.box = "ubuntu/trusty64"
     master.vm.hostname = "master"
     master.vm.network "private_network", ip: "192.168.53.74"
-    master.vm.provider("virtualbox") { |vbox| vbox.name = "master_#{time}" }
+    master.vm.provider("virtualbox") { |vbox| vbox.name = "master_#{@time}" }
     master.vm.network "forwarded_port", guest: 80, host: 8080
     master.vm.network "forwarded_port", guest: 3306, host: 13306
     master.vm.provision "shell", path: "scripts/master.sh"
@@ -35,7 +35,7 @@ Vagrant.configure("2") do |config|
     slave1.vm.box = "ubuntu/trusty64"
     slave1.vm.hostname = "slave1"
     slave1.vm.network "private_network", ip: "192.168.53.75"
-    slave1.vm.provider("virtualbox") { |vbox| vbox.name = "slave1_#{time}" }
+    slave1.vm.provider("virtualbox") { |vbox| vbox.name = "slave1_#{@time}" }
     slave1.vm.provision "shell", path: "scripts/slave1.sh"
   end
 
@@ -43,7 +43,7 @@ Vagrant.configure("2") do |config|
     slave2.vm.box = "ubuntu/trusty64"
     slave2.vm.hostname = "slave2"
     slave2.vm.network "private_network", ip: "192.168.53.76"
-    slave2.vm.provider("virtualbox") { |vbox| vbox.name = "slave2_#{time}" }
+    slave2.vm.provider("virtualbox") { |vbox| vbox.name = "slave2_#{@time}" }
     slave2.vm.provision "shell", path: "scripts/slave2.sh"
   end
 end

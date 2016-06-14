@@ -10,8 +10,11 @@ When visiting any guest machine, e.g. `vagrant ssh client`, you can only get to 
 
 ```bash
 vagrant up          # start and provision all systems
+vagrant provision   # provision or re-provision all systems
 vagrant ssh         # ssh into master
 vagrant ssh client  # ssh into client
 vagrant halt client # shutdown client
-vagrant halt        # shutdown reaming systems
+vagrant halt        # shutdown all systems
+vagrant reload      # restart all systems
+vagrant destroy     # delete all systems
 ```

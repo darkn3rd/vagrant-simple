@@ -8,10 +8,13 @@ Provisioning scripts will make changes to `/etc/hosts` and `/etc/ssh/ssh_config`
 
 ```bash
 vagrant up          # start and provision all systems
+vagrant provision   # provision or re-provision all systems
 vagrant ssh         # ssh into master
 vagrant ssh client  # ssh into client
 vagrant halt client # shutdown client
-vagrant halt        # shutdown reaming systems
+vagrant halt        # shutdown all systems
+vagrant reload      # restart all systems
+vagrant destroy     # delete all systems
 ```
 
 ### **Ansible Inventory**
@@ -19,11 +22,9 @@ vagrant halt        # shutdown reaming systems
 A sample Python script is available for testing an Ansible dynamic inventory file.  With Ansible installed on a Linux or Mac OS X host, you can run:
 
 ```bash
-ansible all -i "inventory.py" -m ping
+vagrant up          # bring systems up
+export ANSIBLE_HOST_KEY_CHECKING=False
+ansible all -i "config/inventory.py" -m ping
 # run a single command
-ansible all -i "inventory.py" -a 'lsb_release -a'
+ansible all -i "config/inventory.py" -a 'lsb_release -a'
 ```
-
-***Note***: This first time this is run, you may have to add the unique hash to known hosts, just type `yes` at the prompts.  If you destroy the machines (`vagrant destroy`) and recreate them (`vagrant up`), you'll have to purge their entries in `~/.ssh/known_hosts`, as the entries will be in an invalid state.  
-
-Reference `man ssh` for more information.

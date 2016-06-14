@@ -5,7 +5,9 @@ This is a simple single machine Vagrant system.  Some popular options are config
 ## **Instructions**
 
 ```bash
-vagrant up   # start system and provision it
-vagrant ssh  # to ssh into system
-vagrant halt # turn off system
+vagrant up      # start system and provision it
+vagrant ssh     # to ssh into system
+vagrant halt    # turn off system
+vagrant reload  # restart system
+vagrant destroy # delete system
 ```

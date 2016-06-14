@@ -3,3 +3,5 @@ Gemfile.lock
 .DS_Store
 *.db
 .idea
+baselib.src
+ssh_config

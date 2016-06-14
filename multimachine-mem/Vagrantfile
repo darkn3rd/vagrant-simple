@@ -9,7 +9,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-VAGRANT_PARSE  = "#{Dir.pwd}/../scriptlib/default.vagrantfile"
+VAGRANT_PARSE  = "#{Dir.pwd}/../scriptlib/default.rb"
 VAGRANT_CREATE = "#{Dir.pwd}/../scriptlib/common.vagrantfile"
 
 ############### BUILD DATASTRUCTURE

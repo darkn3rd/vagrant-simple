@@ -12,7 +12,7 @@
 ############### CONTANTS
 CONFIGFILE     = ENV['VAGRANT_CONFIG'] || './config/global.hosts.csv'
 CONFIGTYPE     = CONFIGFILE.split(/\./)[-1]
-VAGRANT_PARSE  = "#{Dir.pwd}/../scriptlib/#{CONFIGTYPE}.vagrantfile"
+VAGRANT_PARSE  = "#{Dir.pwd}/../scriptlib/#{CONFIGTYPE}.rb"
 VAGRANT_CREATE = "#{Dir.pwd}/../scriptlib/common.vagrantfile"
 BASE_LIBRARY   = "#{Dir.pwd}/../scriptlib/baselib.sh"
 LOCAL_LIBRARY  = "#{Dir.pwd}/scripts/baselib.src"
@@ -29,4 +29,3 @@ end
 if File.file?("#{VAGRANT_CREATE}")
    eval File.read("#{VAGRANT_CREATE}")
 end
- 

@@ -84,14 +84,14 @@ parse_ini() {
 ##########################################
 
 get_hostdata_by_ini() {
-  echo $(parse_ini < ${1} | grep -F hosts | sed 's/^hosts\.//' | tr -s '="' ' ')
+  echo "$(parse_ini < ${1} | grep -F hosts | sed 's/^hosts\.//' | tr -s '="' ' ')"
 }
 
 get_hostdata_by_json() {
   install jq
 
   ##### Output Results
-  echo $(jq -c '.hosts' < ${1} | tr -d '{}"' | tr ':,' ' \n')
+  echo "$(jq -c '.hosts' < ${1} | tr -d '{}"' | tr ':,' ' \n')"
 }
 
 get_hostdata_by_sql() {
@@ -102,18 +102,18 @@ get_hostdata_by_sql() {
   [ -e ${CONFIGDB} ] || sqlite3 ${CONFIGDB} ".read ${1}"  # build db if not exist
   QUERY=".mode column\n SELECT hostname, ipaddr FROM hosts;"
   ##### Output Results
-  echo $(printf ${QUERY} | sqlite3 ${CONFIGDB} | tr -s ' ')
+  echo "$(printf ${QUERY} | sqlite3 ${CONFIGDB} | tr -s ' ')"
 }
 
 get_hostdata_by_xml() {
   ##### Install & Verify Required Tool
   install xml2
   ##### Output Results
-  echo $(xml2 < ${1} | grep -F hosts | tr -s '/=' ' ' | cut -d' ' -f4,5)
+  echo "$(xml2 < ${1} | grep -F hosts | tr -s '/=' ' ' | cut -d' ' -f4,5)"
 }
 
 get_hostdata_by_yaml() {
-  echo $(parse_yaml ${1} | grep -F hosts | sed 's/_hosts_//' | tr -s '="' ' ')
+  echo "$(parse_yaml ${1} | grep -F hosts | sed 's/_hosts_//' | tr -s '="' ' ')"
 }
 
 get_hostdata() {
@@ -122,14 +122,12 @@ get_hostdata() {
 
   CONFIG_TYPE=${1##*.}
   case "${CONFIG_TYPE}" in
-    ini)      echo $(get_hostdata_by_ini  ${CONFIGFILE}) ;;
-    json)     echo $(get_hostdata_by_json ${CONFIGFILE}) ;;
-    sql)      echo $(get_hostdata_by_sql  ${CONFIGFILE}) ;;
-    xml)      echo $(get_hostdata_by_xml  ${CONFIGFILE}) ;;
-    yaml|yml) echo $(get_hostdata_by_yaml ${CONFIGFILE}) ;;
+    ini)      echo "$(get_hostdata_by_ini  ${CONFIGFILE})" ;;
+    json)     echo "$(get_hostdata_by_json ${CONFIGFILE})" ;;
+    sql)      echo "$(get_hostdata_by_sql  ${CONFIGFILE})" ;;
+    xml)      echo "$(get_hostdata_by_xml  ${CONFIGFILE})" ;;
+    yaml|yml) echo "$(get_hostdata_by_yaml ${CONFIGFILE})" ;;
   esac
-
-  echo ${HOSTDATA}
 }
 
 #######

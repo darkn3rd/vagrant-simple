@@ -25,5 +25,6 @@ SCRIPTDIR="/vagrant/scripts"
 . ${SCRIPTDIR}/baselib.src
 
 ##### Setup /etc/ssh_config and /etc/hosts
+install xml2
 config_ssh ${CONFIGFILE}
 config_hosts ${CONFIGFILE}

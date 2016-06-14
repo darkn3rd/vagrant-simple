@@ -4,3 +4,4 @@ Gemfile.lock
 *.db
 .idea
 baselib.src
+ssh_config

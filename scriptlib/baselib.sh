@@ -27,10 +27,19 @@
 ##########################################
 install() {
   PACKAGE="${1}"
-  if ! dpkg -l ${PACKAGE} > /dev/null; then
+  export DEBIAN_FRONTEND=noninteractive
+  if ! dpkg -l ${PACKAGE} > /dev/null 2>&1; then
     apt-get -y -qq install ${PACKAGE} > /dev/null
   fi
+}
 
+#######
+# verify()
+#
+# description: verifies command exist
+# usage: verify $COMMAND
+##########################################
+verify() {
   command -v ${PACKAGE}  > /dev/null || \
     { echo "ERROR: ${PACKAGE} not found. Install ${PACKAGE} or ensure it is in your path";
       return 3; }
@@ -88,26 +97,24 @@ get_hostdata_by_ini() {
 }
 
 get_hostdata_by_json() {
-  install jq
+  verify jq  || return $?
 
   ##### Output Results
   echo "$(jq -c '.hosts' < ${1} | tr -d '{}"' | tr ':,' ' \n')"
 }
 
 get_hostdata_by_sql() {
-  ##### Install & Verify Required Tool
-  install sqlite3
+  verify sqlite3  || return $?
   ##### Fetch Hosts
   CONFIGDB="$(echo ${1} | cut -d. -f1).db"
   [ -e ${CONFIGDB} ] || sqlite3 ${CONFIGDB} ".read ${1}"  # build db if not exist
   ##### Output Results
-  echo "$(printf ".mode column\n SELECT hostname, ipaddr FROM hosts;" | sqlite3 ${CONFIGDB} | tr -s ' ')"
+  echo "$(printf '.mode column\n SELECT hostname, ipaddr FROM hosts;' | sqlite3 ${CONFIGDB} | tr -s ' ')"
 
 }
 
 get_hostdata_by_xml() {
-  ##### Install & Verify Required Tool
-  install xml2
+  verify xml2  || return $?
   ##### Output Results
   echo "$(xml2 < ${1} | grep -F hosts | tr -s '/=' ' ' | cut -d' ' -f4,5)"
 }
@@ -161,11 +168,11 @@ get_hostnames () {
   CONFIG_TYPE=${1##*.}
   case "${CONFIG_TYPE}" in
     csv)
-      echo $(get_hostnames_by_csv       ${CONFIGFILE}) ;;
+      echo "$(get_hostnames_by_csv       ${CONFIGFILE})" ;;
     hosts)
-      echo $(get_hostnames_by_hosts     ${CONFIGFILE}) ;;
+      echo "$(get_hostnames_by_hosts     ${CONFIGFILE})" ;;
     ini|json|sql|xml|yaml|yml)
-      echo $(get_hostnames_by_hostdata  ${CONFIGFILE}) ;;
+      echo "$(get_hostnames_by_hostdata  ${CONFIGFILE})" ;;
   esac
 }
 
@@ -225,7 +232,7 @@ config_ssh () {
 
   CONFIGFILE=$1
   SSH_CONFIG=${2:-"/etc/ssh/ssh_config"}
-  HOSTS=$(get_hostnames ${CONFIGFILE})
+  HOSTS="$(get_hostnames ${CONFIGFILE})"
 
   ##### Local Variables
   cp /dev/null ${SSH_CONFIG}
@@ -268,7 +275,7 @@ config_hosts () {
 
   CONFIGFILE=$1
   HOSTS_FILE=${2:-"/etc/hosts"}
-  HOSTS=$(get_hostnames ${CONFIGFILE})
+  HOSTS="$(get_hostnames ${CONFIGFILE})"
 
   for HOST in ${HOSTS}; do
     if [ "$(hostname)" = "${HOST}" ]; then continue; fi

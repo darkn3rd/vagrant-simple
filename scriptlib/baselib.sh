@@ -26,9 +26,9 @@
 # usage: install $PACKAGE_NAME
 ##########################################
 install() {
-  PACKAGE=$1
+  PACKAGE="${1}"
   if ! dpkg -l ${PACKAGE} > /dev/null; then
-    apt-get -y install ${PACKAGE}
+    apt-get -y -qq install ${PACKAGE} > /dev/null
   fi
 
   command -v ${PACKAGE}  > /dev/null || \
@@ -100,9 +100,9 @@ get_hostdata_by_sql() {
   ##### Fetch Hosts
   CONFIGDB="$(echo ${1} | cut -d. -f1).db"
   [ -e ${CONFIGDB} ] || sqlite3 ${CONFIGDB} ".read ${1}"  # build db if not exist
-  QUERY=".mode column\n SELECT hostname, ipaddr FROM hosts;"
   ##### Output Results
-  echo "$(printf ${QUERY} | sqlite3 ${CONFIGDB} | tr -s ' ')"
+  echo "$(printf ".mode column\n SELECT hostname, ipaddr FROM hosts;" | sqlite3 ${CONFIGDB} | tr -s ' ')"
+
 }
 
 get_hostdata_by_xml() {

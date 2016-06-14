@@ -44,7 +44,8 @@ try:
 except:
     import simplejson as json
 
-_config = os.environ.get('VAGRANT_CONFIG') or 'config/global.hosts.csv'
+_script_home = os.path.dirname(os.path.realpath(__file__))
+_config = os.environ.get('VAGRANT_CONFIG') or '{}/global.hosts.csv'.format(_script_home)
 _group  = 'vagrant'  # a default group
 _sshkey = ".vagrant/machines/{0}/virtualbox/private_key"
 

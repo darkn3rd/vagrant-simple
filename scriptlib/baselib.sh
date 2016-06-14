@@ -1,3 +1,23 @@
+# NAME: baselib.src (baselib.sh)
+# AUTHOR: Joaquin Menchaca
+# CREATED: 2015-11-23
+# UPDATED:
+#   * 2016-04-24 support multiple data formats
+#   * 2016-06-13 built library to support any file
+#
+# PURPOSE: Script library used for configuring `/etc/hosts` and
+#  `/etc/ssh/ssh_config` for easy password-less system to system communication
+#  through ssh.
+# DEPENDENCIES:
+#  * Ubuntu 14.04 Trusty Tahr
+#  * GNU Bash 3+, POSIX Commands (cut, awk, grep, printf, sed, tr)
+#  * Global Configuration - global.(csv|hosts|ini|json|sql|xml|yaml)
+#  * VirtualBox Guest Editions installed on guest system
+#  * Local host . directory mounted as /vagrant on guest system
+#  * Packages: jq, xml2, sqlite3
+# NOTES:
+#  * This script will be run on the guest operating system
+#  * parse_yaml from https://gist.github.com/pkuczynski/8665367
 
 #######
 # install()
@@ -10,13 +30,17 @@ install() {
   if ! dpkg -l ${PACKAGE} > /dev/null; then
     apt-get -y install ${PACKAGE}
   fi
+
+  command -v ${PACKAGE} || \
+    { echo "ERROR: ${PACKAGE} not found. Install ${PACKAGE} or ensure it is in your path";
+      return 3; }
 }
 
 #######
 # parse_yaml()
 #
 # description: flattens YAML file
-# usage: parse_yaml $CONFIGFILE
+# usage: parse_yaml $YAMLFILE
 ##########################################
 parse_yaml() {
    local prefix=$2
@@ -38,7 +62,7 @@ parse_yaml() {
 # parse_ini()
 #
 # description: flattens INI file w/ sep of '.'
-# usage: parse_ini < $CONFIGFILE
+# usage: parse_ini < $INIFILE
 ##########################################
 parse_ini() {
   awk '!/^$/ {
@@ -51,108 +75,61 @@ parse_ini() {
   }'
 }
 
-#######
-# get_hostnames_by_csv()
-#
-# description: prints list of hosts from given file
-# usage: get_hostnames_by_csv $CSVFILE
-# notes:
-#  * destructively strips header
-#  * doesn't handle quoted columns with comma
-##########################################
-get_hostnames_by_csv () {
-   echo $(sed '1d' < ${1} | cut -d, -f1)
-}
 
 #######
-# get_hostnames_by_ini()
+# get_hostdata()
 #
-# description: prints list of hosts from given file
-# usage: get_hostnames_by_ini $INIFILE
+# description: prints space delmited columns from output
+# usage: get_hostdata $CONFIGFILE
 ##########################################
-get_hostnames_by_ini () {
-  HOSTS_DATA=$(parse_ini < ${1} | grep -F hosts | sed 's/^hosts\.//' | tr -s '="' ' ')
-  echo "${HOSTS_DATA}" | cut -d ' ' -f1
+
+get_hostdata_by_ini() {
+  echo $(parse_ini < ${1} | grep -F hosts | sed 's/^hosts\.//' | tr -s '="' ' ')
 }
 
-#######
-# get_hostnames_by_hosts()
-#
-# description: prints list of hosts from given file
-# usage: get_hostnames_by_hosts $HOSTSFILE
-##########################################
-get_hostnames_by_hosts () {
-  echo $(tr -s ' ' < "${1}" | cut -d ' ' -f2)
-}
-
-#######
-# get_hostnames_by_json()
-#
-# description: prints list of hosts from given file
-# usage: get_hostnames_by_json $JSONFILE
-##########################################
-get_hostnames_by_json () {
-  ##### Install & Verify Required Tool
+get_hostdata_by_json() {
   install jq
-  command -v jq || \
-    { echo "ERROR: jq not found. Install jq or ensure it is in your path";
-      return 2; }
 
   ##### Output Results
-  HOSTS_DATA=$(jq -c '.hosts' < ${1} | tr -d '{}"' | tr ':,' ' \n')
-  echo "${HOSTS_DATA}" | cut -d ' ' -f1
+  echo $(jq -c '.hosts' < ${1} | tr -d '{}"' | tr ':,' ' \n')
 }
 
-#######
-# get_hostnames_by_sql()
-#
-# description: prints list of hosts from given file
-# usage: get_hostnames_by_sql $SQLFILE
-##########################################
-get_hostnames_by_sql () {
+get_hostdata_by_sql() {
   ##### Install & Verify Required Tool
   install sqlite3
-  command -v sqlite3 || \
-    { echo "ERROR: sqlite3 not found. Install sqlite3 or ensure it is in your path";
-      return 2; }
-
   ##### Fetch Hosts
   CONFIGDB="$(echo ${1} | cut -d. -f1).db"
   [ -e ${CONFIGDB} ] || sqlite3 ${CONFIGDB} ".read ${1}"  # build db if not exist
   QUERY=".mode column\n SELECT hostname, ipaddr FROM hosts;"
-
   ##### Output Results
-  HOSTS_DATA=$(printf ${QUERY} | sqlite3 ${CONFIGDB} | tr -s ' ')
-  echo "${HOSTS_DATA}" | cut -d ' ' -f1
+  echo $(printf ${QUERY} | sqlite3 ${CONFIGDB} | tr -s ' ')
 }
 
-#######
-# get_hostnames_by_xml()
-#
-# description: prints list of hosts from given file
-# usage: get_hostnames_by_xml $YAMLFILE
-##########################################
-get_hostnames_by_xml () {
+get_hostdata_by_xml() {
   ##### Install & Verify Required Tool
   install xml2
-  command -v xml2 || \
-    { echo "ERROR: xml2 not found. Install xml2 or ensure it is in your path";
-      return 2; }
-
   ##### Output Results
-  HOSTS_DATA=$(xml2 < ${1} | grep -F hosts | tr -s '/=' ' ' | cut -d' ' -f4,5)
-  echo "${HOSTS_DATA}" | cut -d ' ' -f1
+  echo $(xml2 < ${1} | grep -F hosts | tr -s '/=' ' ' | cut -d' ' -f4,5)
 }
 
-#######
-# get_hostnames_by_yaml()
-#
-# description: prints list of hosts from given file
-# usage: get_hostnames_by_yaml $YAMLFILE
-##########################################
-get_hostnames_by_yaml () {
-  HOSTS_DATA=$(parse_yaml ${1} | grep -F hosts | sed 's/_hosts_//' | tr -s '="' ' ')
-  echo "${HOSTS_DATA}" | cut -d ' ' -f1
+get_hostdata_by_yaml() {
+  echo $(parse_yaml ${1} | grep -F hosts | sed 's/_hosts_//' | tr -s '="' ' ')
+}
+
+get_hostdata() {
+  [ $# -le 1 ] || \
+    { echo "USAGE: get_hostnames $CONFIGFILE"; return 1; }
+
+  CONFIG_TYPE=${1##*.}
+  case "${CONFIG_TYPE}" in
+    ini)      echo $(get_hostdata_by_ini  ${CONFIGFILE}) ;;
+    json)     echo $(get_hostdata_by_json ${CONFIGFILE}) ;;
+    sql)      echo $(get_hostdata_by_sql  ${CONFIGFILE}) ;;
+    xml)      echo $(get_hostdata_by_xml  ${CONFIGFILE}) ;;
+    yaml|yml) echo $(get_hostdata_by_yaml ${CONFIGFILE}) ;;
+  esac
+
+  echo ${HOSTDATA}
 }
 
 #######
@@ -161,24 +138,36 @@ get_hostnames_by_yaml () {
 # description: prints list of hosts from given file
 # usage: get_hostnames $CONFIGFILE
 ##########################################
+
+get_hostnames_by_hostdata() {
+  echo "$(get_hostdata $1)" | cut -d ' ' -f1
+}
+
+get_hostnames_by_csv () {
+   echo $(sed '1d' < ${1} | cut -d, -f1)
+}
+
+get_hostnames_by_hosts () {
+  echo $(tr -s ' ' < "${1}" | cut -d ' ' -f2)
+}
+
 get_hostnames () {
   [ $# -le 1 ] || \
-    { echo "ERROR: Must supply configfile as parameter"; return 1; }
+    { echo "USAGE: get_hostnames $CONFIGFILE"; return 1; }
 
   CONFIGFILE=$1
   [ -e ${CONFIGFILE} ] || \
-    { echo "ERROR: ${CONFIGFILE} doesn't exist."; return 1; }
+    { echo "ERROR: ${CONFIGFILE} doesn't exist."; return 2; }
 
   # Call Appropriate Function For Configuration File Type
-  CONFIG_TYPE=$(echo $1 | cut -d. -f2)
+  CONFIG_TYPE=${1##*.}
   case "${CONFIG_TYPE}" in
-    csv)      echo $(get_hostnames_by_csv   ${CONFIGFILE}) ;;
-    ini)      echo $(get_hostnames_by_ini   ${CONFIGFILE}) ;;
-    hosts)    echo $(get_hostnames_by_hosts ${CONFIGFILE}) ;;
-    json)     echo $(get_hostnames_by_json  ${CONFIGFILE}) ;;
-    sql)      echo $(get_hostnames_by_sql   ${CONFIGFILE}) ;;
-    xml)      echo $(get_hostnames_by_xml   ${CONFIGFILE}) ;;
-    yaml|yml) echo $(get_hostnames_by_yaml  ${CONFIGFILE}) ;;
+    csv)
+      echo $(get_hostnames_by_csv       ${CONFIGFILE}) ;;
+    hosts)
+      echo $(get_hostnames_by_hosts     ${CONFIGFILE}) ;;
+    ini|json|sql|xml|yaml|yml)
+      echo $(get_hostnames_by_hostdata  ${CONFIGFILE}) ;;
   esac
 }
 
@@ -186,11 +175,44 @@ get_hostnames () {
 # get_ipaddress()
 #
 # description: prints ipaddress given configfile path and hostname
-# usage: get_ipaddress $CONFIGFILE
+# usage: get_ipaddress $CONFIGFILE $HOSTNAME
 ##########################################
-get_ipaddress () {
-  # test for two parameters
+
+get_ipaddress_by_csv () {
+  # strip header, get 2nd field from match
+  echo $(sed '1d' < ${1} | grep -F "${2}" | cut -d, -f2)
+}
+
+get_ipaddress_by_hosts () {
+  # squeeze extra spaces, get 1st field from match
   echo $(tr -s ' ' < "${1}" | grep -F "${2}" | cut -d ' ' -f1)
+}
+
+get_ipaddress_by_hostdata () {
+  # retreive hostdata, get 2nd field from match
+  echo "$(get_hostdata ${1})" | grep -F "${2}" | cut -d ' ' -f2
+}
+
+get_ipaddress () {
+  [ $# -le 2 ] || \
+    { echo "USAGE: get_ipaddress $CONFIGFILE $HOSTNAME"; return 1; }
+
+  HOSTNAME=$2
+  CONFIGFILE=$1
+
+  [ -e ${CONFIGFILE} ] || \
+    { echo "ERROR: ${CONFIGFILE} doesn't exist."; return 2; }
+
+  # Call Appropriate Function For Configuration File Type
+  CONFIG_TYPE=${1##*.}
+  case "${CONFIG_TYPE}" in
+    csv)
+      echo $(get_ipaddress_by_csv   ${CONFIGFILE} ${HOSTNAME}) ;;
+    hosts)
+      echo $(get_ipaddress_by_hosts ${CONFIGFILE} ${HOSTNAME}) ;;
+    ini|json|sql|xml|yaml|yml)
+      echo $(get_ipaddress_by_hostdata  ${CONFIGFILE} ${HOSTNAME}) ;;
+  esac
 }
 
 #######

@@ -105,7 +105,7 @@ def get_ssh_config():
             ansible_config['ansible_ssh_private_key_file'] = _sshkey.format(row['hostname'])
             ansible_config['ansible_ssh_user'] = 'vagrant'
             ansible_config['ansible_ssh_host'] = row['ipaddr']
-            hostvars[hostname] = ansible_config
+            hostvars[row['hostname']] = ansible_config
 
     return hostvars
 

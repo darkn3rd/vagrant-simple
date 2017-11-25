@@ -34,7 +34,6 @@
     }
 }
 
-
 ############### CONFIGURE VAGRANT MACHINES
 Vagrant.configure("2") do |config|
   @settings['hosts'].each do |hostname, ipaddr|

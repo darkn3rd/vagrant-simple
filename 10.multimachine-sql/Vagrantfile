@@ -11,22 +11,57 @@
 # vi: set ft=ruby :
 
 ############### CONSTANTS
-CONFIGFILE     = ENV['VAGRANT_CONFIG'] || './config/global.sql'
-CONFIGTYPE     = CONFIGFILE.split(/\./)[-1]
-VAGRANT_PARSE  = "#{Dir.pwd}/../scriptlib/#{CONFIGTYPE}.rb"
-VAGRANT_CREATE = "#{Dir.pwd}/../scriptlib/common.vagrantfile"
-BASE_LIBRARY   = "#{Dir.pwd}/../scriptlib/baselib.sh"
-LOCAL_LIBRARY  = "#{Dir.pwd}/scripts/baselib.src"
+CONFIGFILE_SQL = './config/global.sql'
+CONFIGFILE_DB  = ".#{CONFIGFILE_SQL.split(/\./)[1]}.db"
+QUERY_HOSTS    = 'SELECT hostname, ipaddr FROM hosts'
+QUERY_DEFAULT  = 'SELECT hostname FROM hosts WHERE defaults = 1'
+QUERY_PORTS    = 'SELECT hostname, guest, host FROM ports'
 
-############## COPY LOCAL LIBRARY
-FileUtils.cp(BASE_LIBRARY, LOCAL_LIBRARY, :preserve => false)
+############### GET CURRENT TIME
+@time = Time.now.strftime("%Y%m%d%H%M%S")
 
 ############### BUILD DATASTRUCTURE
-if File.file?("#{VAGRANT_PARSE}")
-   eval File.read("#{VAGRANT_PARSE}")
+# Data Structure
+@settings = {'hosts'=>{}, 'ports'=>{}, 'defaults'=>{}}
+# Initialize SQLite3 and Create Database
+require 'sqlite3'
+File.delete(CONFIGFILE_DB) if File.exist?(CONFIGFILE_DB)    # delete, just in case
+system "sqlite3 #{CONFIGFILE_DB} '.read #{CONFIGFILE_SQL}'" # sad but true
+db = SQLite3::Database.open(CONFIGFILE_DB)
+
+# Query Tables and stuff into hash
+db.execute(QUERY_HOSTS) do |hostname, ipaddr|
+  @settings['hosts'][hostname] = ipaddr
+end
+
+db.execute(QUERY_DEFAULT) do |row|
+  hostname = row[0]
+  @settings['defaults'][hostname] = true
+end
+
+db.execute(QUERY_PORTS) do |hostname, guest, host|
+  (@settings['ports'][hostname] ||=[]) << { 'guest' => guest,
+                                            'host'  => host
+                                          }
 end
 
 ############### CONFIGURE VAGRANT MACHINES
-if File.file?("#{VAGRANT_CREATE}")
-   eval File.read("#{VAGRANT_CREATE}")
+Vagrant.configure("2") do |config|
+  @settings['hosts'].each do |hostname, ipaddr|
+    default = @settings['defaults'][hostname] || false
+    config.vm.define hostname, primary: default  do |node|
+      node.vm.box = "ubuntu/trusty64"
+      node.vm.hostname = "#{hostname}"
+      node.vm.network "private_network", ip: ipaddr
+      node.vm.provider("virtualbox") { |vbox| vbox.name = "#{hostname}_#{@time}" }
+      if @settings['ports'][hostname]
+        @settings['ports'][hostname].each do |forward|
+          node.vm.network "forwarded_port", guest: forward['guest'], host: forward['host']
+        end
+      end
+      # Provision
+      node.vm.provision "shell", path: "scripts/setup-base.sh"
+      node.vm.provision "shell", path: "scripts/#{hostname}.sh"
+    end
+  end
 end

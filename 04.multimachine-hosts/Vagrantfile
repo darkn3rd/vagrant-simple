@@ -9,23 +9,56 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-############### CONTANTS
-CONFIGFILE     = ENV['VAGRANT_CONFIG'] || './config/global.hosts'
-CONFIGTYPE     = CONFIGFILE.split(/\./)[-1]
-VAGRANT_PARSE  = "#{Dir.pwd}/../scriptlib/#{CONFIGTYPE}.rb"
-VAGRANT_CREATE = "#{Dir.pwd}/../scriptlib/common.vagrantfile"
-BASE_LIBRARY   = "#{Dir.pwd}/../scriptlib/baselib.sh"
-LOCAL_LIBRARY  = "#{Dir.pwd}/scripts/baselib.src"
 
-############### COPY LOCAL LIBRARY
-FileUtils.cp(BASE_LIBRARY, LOCAL_LIBRARY)
+############### GET CURRENT TIME
+@time = Time.now.strftime("%Y%m%d%H%M%S")
+
+############### CONSTANTS
+CONFIG_HOSTS     = './config/global.hosts'    # hostnames + ipaddresses
+CNOFIG_PORTS     = './config/global.ports'    # NAT port maps
+CONFIG_DEFAULT   = './config/global.defaults' # default system for `vagrant ssh`
 
 ############### BUILD DATASTRUCTURE
-if File.file?("#{VAGRANT_PARSE}")
-   eval File.read("#{VAGRANT_PARSE}")
+@settings = {'hosts'=>{}, 'ports'=>{}, 'defaults'=>{}}  # empty data-structure
+
+# Read Hosts File:  'ipaddress hostname'
+File.readlines(CONFIG_HOSTS).map(&:chomp).each do |line|
+  ipaddr, hostname = line.split(/\s+/)
+  @settings['hosts'][hostname] = ipaddr
+end
+
+# Read Defaults File: 'hostname'
+File.readlines(CONFIG_DEFAULT).map(&:chomp).each do |line|
+  @settings['defaults'][line] = true
+end
+
+# Read Ports File: 'hostname guest:host,guest:host'
+File.readlines(CNOFIG_PORTS).map(&:chomp).each do |line|
+ hostname, forwards = line.split(/\s+/)
+ @settings['ports'][hostname] = []
+ forwards.split(/,/).each do |forward|
+   guest, host = forward.split(/:/)
+   @settings['ports'][hostname] << {'guest'=>guest, 'host'=>host}
+ end
 end
 
 ############### CONFIGURE VAGRANT MACHINES
-if File.file?("#{VAGRANT_CREATE}")
-   eval File.read("#{VAGRANT_CREATE}")
+Vagrant.configure("2") do |config|
+  @settings['hosts'].each do |hostname, ipaddr|
+    default = @settings['defaults'][hostname] || false
+    config.vm.define hostname, primary: default  do |node|
+      node.vm.box = "ubuntu/trusty64"
+      node.vm.hostname = "#{hostname}"
+      node.vm.network "private_network", ip: ipaddr
+      node.vm.provider("virtualbox") { |vbox| vbox.name = "#{hostname}_#{@time}" }
+      if @settings['ports'][hostname]
+        @settings['ports'][hostname].each do |forward|
+          node.vm.network "forwarded_port", guest: forward['guest'], host: forward['host']
+        end
+      end
+      # Provision
+      node.vm.provision "shell", path: "scripts/setup-base.sh"
+      node.vm.provision "shell", path: "scripts/#{hostname}.sh"
+    end
+  end
 end

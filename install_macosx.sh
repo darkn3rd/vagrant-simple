@@ -3,7 +3,6 @@
 # Check for Homebrew
 command -v brew 2>&1 > /dev/null || { echo "ERROR: Homebrew Not Installed" 1>&2; exit 1;}
 brew update
-brew tap Homebrew/bundle
 # Install Packages
 brew bundle --verbose
 
@@ -12,10 +11,9 @@ vagrant plugin install sqlite3
 vagrant plugin install inifile
 
 # Post Python Installations
-brew linkapps python
-pip install --upgrade pip setuptools
+pip2 install --upgrade pip setuptools
 
 # Install Ansible
-sudo -H pip install ansible
+sudo -H pip2 install ansible
 # Install Other Libraries
-pip install -r requirements.txt
+pip2 install -r requirements.txt

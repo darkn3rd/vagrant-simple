@@ -1,10 +1,10 @@
-# **Simple Vagrant Demoes**
+# **Vagrant Tutorial-Reference**
 
-by Joaquin Menchaca, April 2016
+by Joaquin Menchaca, Nov 2017
 
-This exercise that demonstrates [Vagrant](https://www.vagrantup.com/) configuration scenarios with a global configuration file.  As a bonus, an [Ansible](https://www.ansible.com/) dynamic inventory script that sources the same configuration file is provided.
+This is primary tutorial and reference for [Vagrant](https://www.vagrantup.com/) configuration, [Ansible](https://www.ansible.com/) dynamic inventory, and ServerSpec testing.
 
-This demonstrates how to parse a configuration file (in **INI**, **YAML**, **JSON**, **XML**, **CSV**, **SQL**, or **hosts** file formats) in [ruby](https://www.ruby-lang.org/en/), and [bash](https://www.gnu.org/software/bash/). amd [python](https://www.python.org/) languages.
+As part of this construction, there's tutorial and reference for parsing configuration formats [ruby](https://www.ruby-lang.org/en/), and [bash](https://www.gnu.org/software/bash/). and [python](https://www.python.org/) languages.
 
 ## **Example Scenarios**
 
@@ -66,24 +66,20 @@ This is what the base file layout looks like, using YAML as an example:
 
 ```bash
 .
-├── multimachine-yaml
-│   ├── README.md
-│   ├── Vagrantfile        # main ansible configuration
-│   ├── config
-│   │   ├── global.yaml    # global configuration
-│   │   └── inventory.py   # ansinble inventory script, must be next to config
-│   └── scripts
-│       ├── baselib.src    # local copy of baselib.sh
-│       ├── client.sh      # provisioning script
-│       ├── master.sh      # provisioning script
-│       ├── setup-base.sh  # base provisioning script for ssh_config and hosts
-│       ├── slave.sh       # provisioning script
-│       ├── slave1.sh -> slave.sh # symlink to common provisioning script
-│       └── slave2.sh -> slave.sh # symlink to common provisioning script
-└── scriptlib
-    ├── baselib.sh         # main shell provisioning library
-    ├── common.vagrantfile # common base vagrantfile that uses settings hash
-    └── yaml.rb            # creates settings hash from ruby
+└── machine
+    ├── README.md
+    ├── Vagrantfile        # main ansible configuration
+    ├── config
+    │   ├── global.yaml    # global configuration
+    │   └── inventory.py   # ansible inventory script, must be next to config
+    └── scripts
+        ├── baselib.src    # library of functions
+        ├── client.sh      # provisioning script
+        ├── master.sh      # provisioning script
+        ├── setup-base.sh  # base provisioning script for ssh_config and hosts
+        ├── slave.sh       # provisioning script
+        ├── slave1.sh -> slave.sh # symlink to common provisioning script
+        └── slave2.sh -> slave.sh # symlink to common provisioning script
 ```
 
 ## **Final Notes**
@@ -148,6 +144,10 @@ These are some topics I came across while researching Vagrant, Ruby libraries an
           * [XML parsing](http://docs.python-guide.org/en/latest/scenarios/xml/)
           * [Parsing JSON](http://docs.python-guide.org/en/latest/scenarios/json/)
 
+## **CHANGES**
+
+* 2016-Apr Creation
+* 2017-Nov Reorganization, ServerSpec
 
 ## **License**
 

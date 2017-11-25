@@ -12,17 +12,35 @@
 ############### GET CURRENT TIME
 @time = Time.now.strftime("%Y%m%d%H%M%S")
 
+############### INLINE SCRIPT
+@motd_script = <<SCRIPT
+# Install NeoFetch
+add-apt-repository ppa:dawidd0811/neofetch-daily
+apt-get update -qq
+apt-get install -y --no-install-recommends neofetch
+
+# Configure MoTD
+cd /etc/update-motd.d/
+for FILE in *; do chmod -x ${FILE}; done
+apt-get remove -y --purge landscape-common
+ln -sf /usr/bin/neofetch 20-neofetch
+neofetch >> /var/run/motd.dynamic
+SCRIPT
+
 ############### CONFIGURE VAGRANT MACHINES
 Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/trusty64" # download Ubuntu 14 image
-  config.vm.hostname = "example"    # stamp a hostname
+  config.vm.box = "ubuntu/trusty64"        # download Ubuntu 14 image
+  config.vm.hostname = "myworkstation.dev" # stamp a hostname
+
   # private IP should we want to communicate directly
   config.vm.network "private_network", ip: "192.168.53.72"
-  # User Friendly Name in VirtualBox w/ TimeStamp
-  config.vm.provider("virtualbox") { |vbox| vbox.name = "example_#{@time}" }
   # Forward Guest ports to host ports on Localhost (127.0.01)
   config.vm.network "forwarded_port", guest: 80, host: 8080
   config.vm.network "forwarded_port", guest: 3306, host: 13306
+
+  # User Friendly Name in VirtualBox w/ TimeStamp
+  config.vm.provider("virtualbox") { |vbox| vbox.name = "example_#{@time}" }
+
   # Provision Guest System w/ Shell Script
-  config.vm.provision "shell", path: "scripts/provision.sh"
+  config.vm.provision "shell", inline: @motd_script
 end

@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 # Test Configuratiosn from Provisioning
-
 describe 'Provisioning Script Tests' do
   describe ppa('dawidd0811/neofetch-daily') do
     it { should exist }
@@ -34,6 +33,7 @@ describe 'Vagrantfile Configuration Tests' do
   end
 end
 
+# Test Vagrant Image
 describe 'Vagrant Image Tests' do
   describe user('vagrant') do
     it { should exist }

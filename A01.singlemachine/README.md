@@ -2,7 +2,7 @@
 
 This is a simple single machine Vagrant system.  Some popular options are configured in the `Vagrantfile`.
 
-## **Instructions**
+## **General Vagrant Usage**
 
 ```bash
 vagrant up      # start system and provision it

@@ -1,0 +1,7 @@
+name: inspec
+title: InSpec Profile
+maintainer: Joaquin Menchaca
+copyright: Joaquin Menchaca
+license: MIT
+summary: An InSpec Compliance Profile
+version: 0.1.0

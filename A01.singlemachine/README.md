@@ -29,18 +29,7 @@ You can alternatively login using the private IP address:
 ssh vagrant@192.168.53.72
 ```
 
-## **Testing with ServerSpec**
+## **Testing**
 
-You can test using ServerSpec.  You'll have to install ServerSpec (`gem install serverspec`).
-
-You can run these using the test harness:
-
-```bash
-rake spec   # test n systems (only one system)
-```
-
-Or you can manually orchestrate it and use:
-
-```bash
-TARGET_HOST=default rspec # test specified system
-```
+* [ServerSpec](spec/README.md)
+* [Inspec](profiles/single-machine/README.md)

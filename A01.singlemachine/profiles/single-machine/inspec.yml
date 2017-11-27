@@ -1,4 +1,4 @@
-name: inspec
+name: profiles/single-machine
 title: InSpec Profile
 maintainer: Joaquin Menchaca
 copyright: Joaquin Menchaca
